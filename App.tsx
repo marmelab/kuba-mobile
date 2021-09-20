@@ -4,8 +4,16 @@ import { NativeBaseProvider } from 'native-base';
 import React from 'react';
 import { LoginScreen } from './src/Login';
 import GameSelector from './src/GameSelector';
+import GameState from './src/GameState';
 
-const Stack = createNativeStackNavigator();
+export type RootStackParamList = {
+  Home: undefined;
+  Login: undefined;
+  GameSelector: undefined;
+  GameState: { gameId: number } | undefined;
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   const [player, setPlayer] = React.useState<Player>({
@@ -23,7 +31,10 @@ export default function App() {
               {(props) => <LoginScreen {...props} setPlayer={setPlayer} />}
             </Stack.Screen>
           ) : (
-            <Stack.Screen name="Game Selector" component={GameSelector} />
+            <React.Fragment>
+              <Stack.Screen name="GameSelector" component={GameSelector} />
+              <Stack.Screen name="GameState" component={GameState} />
+            </React.Fragment>
           )}
         </Stack.Navigator>
       </NavigationContainer>
