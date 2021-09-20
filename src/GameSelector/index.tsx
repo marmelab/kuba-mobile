@@ -12,31 +12,35 @@ const GameSelectorForm = () => {
   const [errors, setErrors] = React.useState({});
 
   const validate = () => {
-    if (formData.gameId === undefined || formData.gameId === 0) {
+    if (!formData.gameId) {
       setErrors({
         ...errors,
         gameId: "The game id cannot be empty",
       });
+      console.error("Validation Failed")
       return false;
     }
 
     setErrors({});
+    console.info("Submitted")
     return true;
   };
 
-  const onSubmit = () => {
-    validate() ? console.info("Submitted") : console.error("Validation Failed");
+  const onSubmit = () => validate();
+
+  const handleChangeText = (value: string) => {
+    setData({ ...formData, gameId: +value });
   };
 
   return (
     <VStack width="90%" mx={3}>
-      <FormControl isRequired isInvalid={'gameId' in errors}>
+      <FormControl isRequired isInvalid={"gameId" in errors}>
         <FormControl.Label _text={{ bold: true }}>Game id</FormControl.Label>
         <Input
           placeholder="1, 2..."
           keyboardType="numeric"
           returnKeyType="done"
-          onChangeText={(value) => setData({ ...formData, gameId: +value })}
+          onChangeText={(value) => handleChangeText(value)}
         />
 
         {"gameId" in errors ? (
