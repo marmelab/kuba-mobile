@@ -16,6 +16,7 @@ export const LoginScreen = (props: LoginProps) => {
   const [show, setShow] = React.useState<boolean>(false);
   const [username, setUsername] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
+  const [isLoading, setIsLoading] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState<errorMessage>();
 
   const toast = useToast();
@@ -23,6 +24,7 @@ export const LoginScreen = (props: LoginProps) => {
   const handlePasswordShow = () => setShow(!show);
 
   const handleLogin = async (usernameValue: string, passwordValue: string) => {
+    setIsLoading(true);
     const details = await login(usernameValue, passwordValue);
     if (details) {
       toast.show({
@@ -30,12 +32,14 @@ export const LoginScreen = (props: LoginProps) => {
         status: 'success',
         description: 'Enjoy !',
       });
+      setIsLoading(false);
       return props.setPlayer({
         id: details.id,
         token: details.token,
         isConnected: true,
       });
     }
+    setIsLoading(false);
     return setErrorMessage("Your email and your password don't match");
   };
 
@@ -94,6 +98,7 @@ export const LoginScreen = (props: LoginProps) => {
             onPress={() => {
               handleLogin(username.toLowerCase(), password);
             }}
+            isLoading={isLoading}
           >
             Login
           </Button>
