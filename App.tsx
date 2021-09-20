@@ -8,15 +8,19 @@ import { LoginScreen } from './src/Login';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const [isConnected, setIsConnected] = React.useState<boolean>(false);
+  const [player, setPlayer] = React.useState<Player>({
+    id: null,
+    token: null,
+    isConnected: false,
+  });
 
   return (
     <NativeBaseProvider>
       <NavigationContainer>
         <Stack.Navigator>
-          {!isConnected ? (
+          {!player.isConnected ? (
             <Stack.Screen name="Login">
-              {(props) => <LoginScreen {...props} setConn={setIsConnected} />}
+              {(props) => <LoginScreen {...props} setPlayer={setPlayer} />}
             </Stack.Screen>
           ) : (
             <Stack.Screen name="Home" component={HomeScreen} />
@@ -26,3 +30,9 @@ export default function App() {
     </NativeBaseProvider>
   );
 }
+
+type Player = {
+  id: number | null;
+  token: string | null;
+  isConnected: boolean;
+};

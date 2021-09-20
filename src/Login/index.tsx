@@ -6,9 +6,11 @@ import {
   FormControl,
   Heading,
   VStack,
-  Link,
-  Text,
+  useToast,
 } from 'native-base';
+import Constants from 'expo-constants';
+
+const API_URL = Constants?.manifest?.extra?.API_URL;
 
 export const LoginScreen = (props: LoginProps) => {
   const [show, setShow] = React.useState<boolean>(false);
@@ -16,11 +18,23 @@ export const LoginScreen = (props: LoginProps) => {
   const [password, setPassword] = React.useState<string>('');
   const [errorMessage, setErrorMessage] = React.useState<errorMessage>();
 
+  const toast = useToast();
+
   const handlePasswordShow = () => setShow(!show);
 
-  const handleLogin = (usernameValue: string, passwordValue: string) => {
-    if (usernameValue === 'alex' && passwordValue === '1234') {
-      return props.setConn(true);
+  const handleLogin = async (usernameValue: string, passwordValue: string) => {
+    const details = await login(usernameValue, passwordValue);
+    if (details) {
+      toast.show({
+        title: 'Logged In',
+        status: 'success',
+        description: 'Enjoy !',
+      });
+      return props.setPlayer({
+        id: details.id,
+        token: details.token,
+        isConnected: true,
+      });
     }
     return setErrorMessage("Your email and your password don't match");
   };
@@ -78,7 +92,7 @@ export const LoginScreen = (props: LoginProps) => {
             colorScheme="cyan"
             _text={{ color: 'white' }}
             onPress={() => {
-              handleLogin(username, password);
+              handleLogin(username.toLowerCase(), password);
             }}
           >
             Login
@@ -89,8 +103,29 @@ export const LoginScreen = (props: LoginProps) => {
   );
 };
 
+const login = async (username: string, password: string) => {
+  try {
+    const response = await fetch(`${API_URL}/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username,
+        password,
+      }),
+    });
+
+    if (response.status >= 200 && response.status < 300) {
+      const details = await response.json();
+      return details;
+    }
+    return false;
+  } catch (error) {}
+};
+
 type LoginProps = {
-  setConn: Function;
+  setPlayer: Function;
 };
 
 type errorMessage = string | null;
