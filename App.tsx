@@ -8,7 +8,7 @@ import { LoginScreen } from './src/Login';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const [isConnected, setIsConnected] = React.useState(false);
+  const [isConnected, setIsConnected] = React.useState<boolean>(false);
 
   return (
     <NativeBaseProvider>

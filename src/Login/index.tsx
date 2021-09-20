@@ -7,14 +7,23 @@ import {
   Heading,
   VStack,
   Link,
+  Text,
 } from 'native-base';
 
 export const LoginScreen = (props: LoginProps) => {
-  const [show, setShow] = React.useState(false);
-  const [username, setUsername] = React.useState('');
-  const [password, setPassword] = React.useState('');
+  const [show, setShow] = React.useState<boolean>(false);
+  const [username, setUsername] = React.useState<string>('');
+  const [password, setPassword] = React.useState<string>('');
+  const [errorMessage, setErrorMessage] = React.useState<errorMessage>();
 
-  const handleClick = () => setShow(!show);
+  const handlePasswordShow = () => setShow(!show);
+
+  const handleLogin = (usernameValue: string, passwordValue: string) => {
+    if (usernameValue === 'alex' && passwordValue === '1234') {
+      return props.setConn(true);
+    }
+    return setErrorMessage("Your email and your password don't match");
+  };
 
   return (
     <Box safeArea flex={1} p={2} w="90%" mx="auto">
@@ -26,7 +35,7 @@ export const LoginScreen = (props: LoginProps) => {
       </Heading>
 
       <VStack space={2} mt={5}>
-        <FormControl>
+        <FormControl isInvalid={!!errorMessage}>
           <FormControl.Label
             _text={{ color: 'muted.700', fontSize: 'sm', fontWeight: 600 }}
           >
@@ -37,24 +46,39 @@ export const LoginScreen = (props: LoginProps) => {
             onChangeText={(inputValue) => setUsername(inputValue)}
           />
         </FormControl>
-        <FormControl mb={5}>
+        <FormControl mb={5} isInvalid={!!errorMessage}>
           <FormControl.Label
             _text={{ color: 'muted.700', fontSize: 'sm', fontWeight: 600 }}
           >
             Password
           </FormControl.Label>
           <Input
-            type="password"
+            type={show ? 'text' : 'password'}
             value={password}
             onChangeText={(inputValue) => setPassword(inputValue)}
+            InputRightElement={
+              <Button
+                ml={1}
+                roundedLeft={0}
+                roundedRight="md"
+                onPress={handlePasswordShow}
+              >
+                {show ? 'Hide' : 'Show'}
+              </Button>
+            }
           />
+          <FormControl.ErrorMessage
+            _text={{ fontSize: 'xl', color: 'error.500', fontWeight: 500 }}
+          >
+            {errorMessage ? errorMessage : null}
+          </FormControl.ErrorMessage>
         </FormControl>
         <VStack space={2}>
           <Button
             colorScheme="cyan"
             _text={{ color: 'white' }}
             onPress={() => {
-              props.setConn(true);
+              handleLogin(username, password);
             }}
           >
             Login
@@ -68,3 +92,5 @@ export const LoginScreen = (props: LoginProps) => {
 type LoginProps = {
   setConn: Function;
 };
+
+type errorMessage = string | null;
