@@ -2,7 +2,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NativeBaseProvider } from 'native-base';
 import React from 'react';
-import { HomeScreen } from './src/Home';
 import { LoginScreen } from './src/Login';
 import GameSelector from './src/GameSelector';
 
