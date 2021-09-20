@@ -12,3 +12,4 @@ app.config.ts
 
 # macOS
 .DS_Store
+.env
