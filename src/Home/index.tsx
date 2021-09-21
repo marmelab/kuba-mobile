@@ -1,5 +1,5 @@
-import { Center, Box } from "native-base";
-import React from "react";
+import { Center, Box } from 'native-base';
+import React from 'react';
 
 export const HomeScreen = () => {
   return (
