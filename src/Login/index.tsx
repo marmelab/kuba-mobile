@@ -25,22 +25,25 @@ export const LoginScreen = (props: LoginProps) => {
 
   const handleLogin = async () => {
     setIsLoading(true);
-    const userDetails = await login(email, password);
-    if (userDetails) {
+
+    try {
+      const response = await login(email, password);
+      const userDetails = await response.json();
+      setIsLoading(false);
       toast.show({
         title: 'Logged In',
         status: 'success',
         description: 'Enjoy !',
       });
-      setIsLoading(false);
       return props.setPlayer({
         id: userDetails.id,
         token: userDetails.token,
         isConnected: true,
       });
+    } catch (e) {
+      setIsLoading(false);
+      return setErrorMessage(`${e}`);
     }
-    setIsLoading(false);
-    return setErrorMessage("Your email and your password don't match");
   };
 
   return (
@@ -108,23 +111,22 @@ export const LoginScreen = (props: LoginProps) => {
 };
 
 const login = async (email: string, password: string) => {
-  try {
-    const response = await fetch(`${API_URL}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        username: email,
-        password,
-      }),
-    });
+  const response = await fetch(`${API_URL}/auth/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      username: email,
+      password,
+    }),
+  });
 
-    if (response.status >= 200 && response.status < 300) {
-      return await response.json();
-    }
-    return false;
-  } catch (error) {}
+  if (response.status >= 200 && response.status < 300) {
+    return response;
+  } else {
+    throw new Error("Your email and your password don't match");
+  }
 };
 
 type LoginProps = {
