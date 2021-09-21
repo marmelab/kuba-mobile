@@ -2,7 +2,6 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
   ArrowBackIcon,
   Box,
-  Center,
   CheckIcon,
   Flex,
   Heading,
@@ -21,7 +20,6 @@ import Constants from 'expo-constants';
 import { Game, GameInitialization, User } from '../interface';
 import { Board } from './Board';
 import { Marble } from './Marble';
-import { background } from 'styled-system';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'GameState'>;
 const API_URL = Constants?.manifest?.extra?.API_URL;
