@@ -14,7 +14,7 @@ const API_URL = Constants?.manifest?.extra?.API_URL;
 
 export const LoginScreen = (props: LoginProps) => {
   const [show, setShow] = React.useState<boolean>(false);
-  const [username, setUsername] = React.useState<string>('');
+  const [email, setEmail] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
   const [isLoading, setIsLoading] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState<errorMessage>();
@@ -23,10 +23,10 @@ export const LoginScreen = (props: LoginProps) => {
 
   const handlePasswordShow = () => setShow(!show);
 
-  const handleLogin = async (usernameValue: string, passwordValue: string) => {
+  const handleLogin = async () => {
     setIsLoading(true);
-    const details = await login(usernameValue, passwordValue);
-    if (details) {
+    const userDetails = await login(email, password);
+    if (userDetails) {
       toast.show({
         title: 'Logged In',
         status: 'success',
@@ -34,8 +34,8 @@ export const LoginScreen = (props: LoginProps) => {
       });
       setIsLoading(false);
       return props.setPlayer({
-        id: details.id,
-        token: details.token,
+        id: userDetails.id,
+        token: userDetails.token,
         isConnected: true,
       });
     }
@@ -60,8 +60,8 @@ export const LoginScreen = (props: LoginProps) => {
             Email
           </FormControl.Label>
           <Input
-            value={username}
-            onChangeText={(inputValue) => setUsername(inputValue)}
+            value={email}
+            onChangeText={(inputValue) => setEmail(inputValue)}
           />
         </FormControl>
         <FormControl mb={5} isInvalid={!!errorMessage}>
@@ -95,9 +95,7 @@ export const LoginScreen = (props: LoginProps) => {
           <Button
             colorScheme="cyan"
             _text={{ color: 'white' }}
-            onPress={() => {
-              handleLogin(username.toLowerCase(), password);
-            }}
+            onPress={handleLogin}
             isLoading={isLoading}
           >
             Login
@@ -108,7 +106,7 @@ export const LoginScreen = (props: LoginProps) => {
   );
 };
 
-const login = async (username: string, password: string) => {
+const login = async (email: string, password: string) => {
   try {
     const response = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
@@ -116,14 +114,13 @@ const login = async (username: string, password: string) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        username,
+        username: email,
         password,
       }),
     });
 
     if (response.status >= 200 && response.status < 300) {
-      const details = await response.json();
-      return details;
+      return await response.json();
     }
     return false;
   } catch (error) {}
