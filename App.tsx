@@ -4,6 +4,7 @@ import { NativeBaseProvider } from 'native-base';
 import React from 'react';
 import { LoginScreen } from './src/Login';
 import GameSelector from './src/GameSelector';
+import { UserType } from './src/types';
 
 const Stack = createNativeStackNavigator();
 
