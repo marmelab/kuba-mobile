@@ -33,9 +33,10 @@ export const LoginScreen = (props: LoginProps) => {
         description: 'Enjoy !',
       });
       setIsLoading(false);
-      return props.setPlayer({
+      return props.setUser({
         id: userDetails.id,
-        token: userDetails.token,
+        username: userDetails.username,
+        token: userDetails.access_token,
         isConnected: true,
       });
     }
@@ -128,7 +129,7 @@ const login = async (email: string, password: string) => {
 };
 
 type LoginProps = {
-  setPlayer: Function;
+  setUser: Function;
 };
 
 type errorMessage = string | null;
