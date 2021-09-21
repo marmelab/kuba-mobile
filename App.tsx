@@ -5,6 +5,7 @@ import React from 'react';
 import { LoginScreen } from './src/Login';
 import GameSelector from './src/GameSelector';
 import GameState from './src/GameState';
+import { User } from './src/interface';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -15,15 +16,21 @@ export type RootStackParamList = {
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+const config = {
+  dependencies: {
+    'linear-gradient': require('expo-linear-gradient').LinearGradient,
+  },
+};
+
 export default function App() {
-  const [player, setPlayer] = React.useState<Player>({
+  const [player, setPlayer] = React.useState<User>({
     id: null,
     token: null,
     isConnected: false,
   });
 
   return (
-    <NativeBaseProvider>
+    <NativeBaseProvider config={config}>
       <NavigationContainer>
         <Stack.Navigator>
           {!player.isConnected ? (
@@ -41,9 +48,3 @@ export default function App() {
     </NativeBaseProvider>
   );
 }
-
-type Player = {
-  id: number | null;
-  token: string | null;
-  isConnected: boolean;
-};

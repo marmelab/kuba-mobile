@@ -9,7 +9,7 @@ npm-debug.*
 *.orig.*
 web-build/
 app.config.ts
+.env
 
 # macOS
 .DS_Store
-.env
