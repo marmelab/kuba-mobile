@@ -60,6 +60,7 @@ export const LoginScreen = (props: LoginProps) => {
             Email
           </FormControl.Label>
           <Input
+            autoCapitalize="none"
             value={email}
             onChangeText={(inputValue) => setEmail(inputValue)}
           />
