@@ -1,30 +1,43 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Button, Center, FormControl, Input, VStack } from 'native-base';
-import React from 'react';
+import {
+  Box,
+  Button,
+  Center,
+  FormControl,
+  HStack,
+  Input,
+  View,
+  VStack,
+  Text,
+} from 'native-base';
+import React, { useEffect, useState } from 'react';
 import { RootStackParamList } from '../../App';
+import { API_URL } from '../constant';
+import { Game } from '../interface';
 
 export interface GameSelectorFormData {
   gameId: number;
 }
 
-type Props = NativeStackScreenProps<RootStackParamList, 'GameSelector'>;
-
-export default function ({ navigation }: Props) {
+export default function ({ navigation, player }: any) {
   const [formData, setData] = React.useState<GameSelectorFormData>({
     gameId: -1,
   });
-  const [errors, setErrors] = React.useState({});
+  const [errorsForm, setErrorsForm] = React.useState({});
+  const [userGames, setUserGames] = useState<Game[]>();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [errorUserGames, setErrorUserGames] = useState<any>();
 
   const validate = () => {
     if (!formData.gameId) {
-      setErrors({
-        ...errors,
+      setErrorsForm({
+        ...errorsForm,
         gameId: 'The game id cannot be empty',
       });
       return false;
     }
 
-    setErrors({});
+    setErrorsForm({});
     navigation.navigate('GameState', {
       gameId: formData.gameId,
     });
@@ -36,10 +49,38 @@ export default function ({ navigation }: Props) {
   };
 
   const onSubmit = () => validate();
-  return (
-    <Center flex={1}>
+
+  const getUserGames = async () => {
+    try {
+      const response = await fetch(
+        `${API_URL}/games?filter=${encodeURI(
+          JSON.stringify({ playerNumber: [player.id] }),
+        )}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + player.token,
+          },
+        },
+      );
+      const json = (await response.json()).data as Game[];
+      setUserGames(json);
+    } catch (error) {
+      setErrorUserGames(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getUserGames();
+  }, []);
+
+  const GameSelectorForm = () => {
+    return (
       <VStack width="90%" mx={3}>
-        <FormControl isRequired isInvalid={'gameId' in errors}>
+        <FormControl isRequired isInvalid={'gameId' in errorsForm}>
           <FormControl.Label _text={{ bold: true }}>Game id</FormControl.Label>
           <Input
             placeholder="1, 2..."
@@ -48,7 +89,7 @@ export default function ({ navigation }: Props) {
             onChangeText={(value) => handleChangeText(value)}
           />
 
-          {'gameId' in errors ? (
+          {'gameId' in errorsForm ? (
             <FormControl.ErrorMessage
               _text={{ fontSize: 'xs', color: 'error.500', fontWeight: 500 }}
             >
@@ -65,6 +106,48 @@ export default function ({ navigation }: Props) {
           Submit
         </Button>
       </VStack>
+    );
+  };
+
+  const UserGamesList = () => {
+    console.log(userGames);
+    return (
+      <View>
+        {userGames?.map((game) => (
+          <Box
+            shadow={1}
+            mb={4}
+            width="full"
+            bg={{
+              linearGradient: {
+                colors: ['cyan.400', 'cyan.100'],
+                start: [0, 0],
+                end: [1, 0],
+              },
+            }}
+            rounded="lg"
+            key={game.id}
+          >
+            <HStack
+              alignItems="center"
+              justifyContent="space-between"
+              p={4}
+              space={2}
+            >
+              <Text fontSize="lg" bold color="white">
+                Game #{game?.id}
+              </Text>
+            </HStack>
+          </Box>
+        ))}
+      </View>
+    );
+  };
+
+  return (
+    <Center flex={1}>
+      <GameSelectorForm />
+      <UserGamesList />
     </Center>
   );
 }

@@ -16,13 +16,12 @@ import {
 } from 'native-base';
 import React, { useEffect, useReducer } from 'react';
 import { RootStackParamList } from '../../App';
-import Constants from 'expo-constants';
+import { API_URL } from '../constant';
 import { Game, GameInitialization, User } from '../interface';
 import { Board } from './Board';
 import { Marble } from './Marble';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'GameState'>;
-const API_URL = Constants?.manifest?.extra?.API_URL;
 
 const initialState: GameInitialization = {
   players: [],
