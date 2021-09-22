@@ -2,7 +2,6 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
   ArrowBackIcon,
   Box,
-  Center,
   CheckIcon,
   Flex,
   Heading,
@@ -17,14 +16,10 @@ import {
 } from 'native-base';
 import React, { useEffect, useReducer } from 'react';
 import { RootStackParamList } from '../../App';
-import Constants from 'expo-constants';
+import { API_URL } from '../constant';
 import { Game, GameInitialization, User } from '../interface';
 import { Board } from './Board';
 import { Marble } from './Marble';
-import { background } from 'styled-system';
-
-type Props = NativeStackScreenProps<RootStackParamList, 'GameState'>;
-const API_URL = Constants?.manifest?.extra?.API_URL;
 
 const initialState: GameInitialization = {
   players: [],
@@ -40,13 +35,19 @@ const reducer = (
   return { ...state, [action.type]: action.value };
 };
 
-export default function GameState({ navigation, route }: Props) {
+export default function GameState({ navigation, route, player }: any) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const gameId = route.params?.gameId;
 
   const getGame = async () => {
     try {
-      const response = await fetch(`${API_URL}/games/${gameId}`);
+      const response = await fetch(`${API_URL}/games/${gameId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + player.token,
+        },
+      });
       const json = (await response.json()) as Game;
       dispatch({ type: 'game', value: json });
       if (json.players) {
@@ -54,7 +55,6 @@ export default function GameState({ navigation, route }: Props) {
         await getPlayers(ids);
       }
     } catch (error) {
-      console.log(error);
       dispatch({ type: 'error', value: error });
     } finally {
       dispatch({ type: 'isLoading', value: false });
@@ -65,6 +65,13 @@ export default function GameState({ navigation, route }: Props) {
     try {
       const response = await fetch(
         `${API_URL}/user?filter=${encodeURI(JSON.stringify({ id: ids }))}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + player.token,
+          },
+        },
       );
       const json = (await response.json()).data as User[];
       dispatch({ type: 'players', value: json });
@@ -104,7 +111,7 @@ export default function GameState({ navigation, route }: Props) {
         >
           <Spinner size="lg" />
         </View>
-      ) : state.error ? (
+      ) : !state.error ? (
         <ScrollView p={6} contentContainerStyle={{ paddingBottom: 24 }}>
           <GameInfo game={state.game} />
           <Board board={state.game?.board} />

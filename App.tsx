@@ -10,7 +10,7 @@ import { User } from './src/interface';
 export type RootStackParamList = {
   Home: undefined;
   Login: undefined;
-  GameSelector: undefined;
+  GameSelector: { player: User } | undefined;
   GameState: { gameId: number } | undefined;
 };
 
@@ -39,8 +39,12 @@ export default function App() {
             </Stack.Screen>
           ) : (
             <React.Fragment>
-              <Stack.Screen name="GameSelector" component={GameSelector} />
-              <Stack.Screen name="GameState" component={GameState} />
+              <Stack.Screen name="GameSelector">
+                {(props) => <GameSelector {...props} player={player} />}
+              </Stack.Screen>
+              <Stack.Screen name="GameState">
+                {(props) => <GameState {...props} player={player} />}
+              </Stack.Screen>
             </React.Fragment>
           )}
         </Stack.Navigator>

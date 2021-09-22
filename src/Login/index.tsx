@@ -8,9 +8,8 @@ import {
   VStack,
   useToast,
 } from 'native-base';
-import Constants from 'expo-constants';
 
-const API_URL = Constants?.manifest?.extra?.API_URL;
+import { API_URL } from '../constant';
 
 export const LoginScreen = (props: LoginProps) => {
   const [show, setShow] = React.useState<boolean>(false);
@@ -33,9 +32,10 @@ export const LoginScreen = (props: LoginProps) => {
         description: 'Enjoy !',
       });
       setIsLoading(false);
+
       return props.setPlayer({
         id: userDetails.id,
-        token: userDetails.token,
+        token: userDetails.access_token,
         isConnected: true,
       });
     }
