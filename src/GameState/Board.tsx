@@ -1,20 +1,19 @@
-import {
-  Stack,
-  HStack,
-  Box,
-} from "native-base";
-import React from "react";
-import { Marble } from "./Marble";
+import { Stack, HStack, Box } from 'native-base';
+import React from 'react';
+import { Marble } from './Marble';
 
 export const Board = (props: any) => {
   const board = props.board;
+  const boardSize = props.preview ? 4 : 12;
+  const marbleColorSize = props.preview ? 4 : 12;
+  const marbleEmptySize = props.preview ? 2 : 4;
   return (
     <Stack mb={4}>
       {board.map((row: [], rowIndex: number) => (
         <HStack alignItems="center" key={rowIndex}>
           {row.map((cell, cellIndex) => (
             <Box
-              size={12}
+              size={boardSize}
               alignItems="center"
               justifyContent="center"
               key={cellIndex}
@@ -22,7 +21,10 @@ export const Board = (props: any) => {
               m={0}
               p={0}
             >
-              <Marble value={cell}/>
+              <Marble
+                value={cell}
+                size={cell === 0 ? marbleEmptySize : marbleColorSize}
+              />
             </Box>
           ))}
         </HStack>

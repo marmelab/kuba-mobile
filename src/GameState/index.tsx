@@ -21,8 +21,6 @@ import { Game, GameInitialization, User } from '../interface';
 import { Board } from './Board';
 import { Marble } from './Marble';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'GameState'>;
-
 const initialState: GameInitialization = {
   players: [],
   game: undefined,
@@ -37,13 +35,19 @@ const reducer = (
   return { ...state, [action.type]: action.value };
 };
 
-export default function GameState({ navigation, route }: Props) {
+export default function GameState({ navigation, route, player }: any) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const gameId = route.params?.gameId;
 
   const getGame = async () => {
     try {
-      const response = await fetch(`${API_URL}/games/${gameId}`);
+      const response = await fetch(`${API_URL}/games/${gameId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + player.token,
+        },
+      });
       const json = (await response.json()) as Game;
       dispatch({ type: 'game', value: json });
       if (json.players) {
@@ -51,7 +55,6 @@ export default function GameState({ navigation, route }: Props) {
         await getPlayers(ids);
       }
     } catch (error) {
-      console.log(error);
       dispatch({ type: 'error', value: error });
     } finally {
       dispatch({ type: 'isLoading', value: false });
@@ -62,6 +65,13 @@ export default function GameState({ navigation, route }: Props) {
     try {
       const response = await fetch(
         `${API_URL}/user?filter=${encodeURI(JSON.stringify({ id: ids }))}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + player.token,
+          },
+        },
       );
       const json = (await response.json()).data as User[];
       dispatch({ type: 'players', value: json });
@@ -101,7 +111,7 @@ export default function GameState({ navigation, route }: Props) {
         >
           <Spinner size="lg" />
         </View>
-      ) : state.error ? (
+      ) : !state.error ? (
         <ScrollView p={6} contentContainerStyle={{ paddingBottom: 24 }}>
           <GameInfo game={state.game} />
           <Board board={state.game?.board} />

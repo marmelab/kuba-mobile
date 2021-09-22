@@ -43,7 +43,7 @@ export default function App() {
                 {(props) => <GameSelector {...props} player={player} />}
               </Stack.Screen>
               <Stack.Screen name="GameState">
-                {(props) => <GameState {...props} />}
+                {(props) => <GameState {...props} player={player} />}
               </Stack.Screen>
             </React.Fragment>
           )}
