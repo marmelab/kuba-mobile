@@ -16,8 +16,8 @@ import { User } from './src/interface';
 export type RootStackParamList = {
   Home: undefined;
   Login: undefined;
-  GameSelector: undefined;
   account: undefined;
+  GameSelector: { player: User } | undefined;
   GameState: { gameId: number } | undefined;
 };
 
@@ -36,8 +36,7 @@ const initUser = (): UserType => {
     token: null,
     username: null,
     email: null,
-    isConnected: false,
-    currentGameId: null
+    isConnected: false
   }
 }
 export default function App() {
@@ -50,8 +49,14 @@ export default function App() {
         {user.isConnected ? (
           <>
             <bottomNav.Navigator>
-              <bottomNav.Screen name="GameSelector" component={GameSelector} />
-              {user.currentGameId && <bottomNav.Screen name="GameState" component={GameState} />}
+              <bottomNav.Screen name="GameSelector">
+                {(props) => <GameSelector {...props} player={user} setUser={setUser} />}
+              </bottomNav.Screen>
+
+              <bottomNav.Screen name="GameState">
+                {(props) => <GameState {...props} player={user} />}
+              </bottomNav.Screen>
+
               <bottomNav.Screen name="account">
                 {(props) => <UserTab {...props} user={user} setUser={setUser} initUser={initUser} />}
               </bottomNav.Screen>
@@ -63,10 +68,11 @@ export default function App() {
             <Stack.Screen name="Login">
               {(props) => <LoginScreen {...props} setUser={setUser} />}
             </Stack.Screen>
-          </Stack.Navigator>
-        )}
+          </Stack.Navigator >
+        )
+        }
 
-      </NavigationContainer>
-    </NativeBaseProvider>
+      </NavigationContainer >
+    </NativeBaseProvider >
   );
 }
