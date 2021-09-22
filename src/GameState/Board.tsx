@@ -8,9 +8,8 @@ export const Board = (props: any) => {
   const marbleColorSize = props.preview ? 4 : 12;
   const marbleEmptySize = props.preview ? 2 : 4;
 
-
-  const [marbleClickedCoordinates, setMarbleClickedCoordinates] = React.useState<{ x: number, y: number } | null>(null)
-
+  const [marbleClickedCoordinates, setMarbleClickedCoordinates] =
+    React.useState<{ x: number; y: number } | null>(null);
 
   return (
     <Stack mb={4}>
@@ -22,7 +21,12 @@ export const Board = (props: any) => {
               alignItems="center"
               justifyContent="center"
               key={cellIndex}
-              bg={marbleClickedCoordinates?.x === cellIndex && marbleClickedCoordinates?.y === rowIndex ? '#0bf220' : "#948e8b"}
+              bg={
+                marbleClickedCoordinates?.x === cellIndex &&
+                marbleClickedCoordinates?.y === rowIndex
+                  ? '#0bf220'
+                  : '#948e8b'
+              }
               m={0}
               p={0}
             >
@@ -32,7 +36,6 @@ export const Board = (props: any) => {
                 rowIndex={rowIndex}
                 cellIndex={cellIndex}
                 setMarbleClickedCoordinates={setMarbleClickedCoordinates}
-                setMarbleClicked={props.setMarbleClicked}
               />
             </Box>
           ))}
