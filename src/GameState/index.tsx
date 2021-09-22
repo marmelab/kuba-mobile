@@ -34,6 +34,8 @@ const reducer = (
   return { ...state, [action.type]: action.value };
 };
 
+let WS: any = undefined;
+
 export default function GameState({ navigation, route, player }: any) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const gameId = route.params?.gameId;
@@ -124,6 +126,8 @@ export default function GameState({ navigation, route, player }: any) {
       if (WS) WS.close();
     };
   }, []);
+
+  useEffect(() => () => WS.close(), []);
 
   return (
     <Flex flex={1}>
