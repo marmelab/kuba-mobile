@@ -15,6 +15,7 @@ If it shows a QR code on the terminal as a result of 'yarn start' command, then 
 You have an environment file to declare `.env`.
 You can use the `.env.sample` file as a starting point by renaming it .env
 This file must contain a variable `API_URL` which is the address of your data provider
+Also need a variable `GATEWAY_URL` which is the address of your gateway
 
 ## Mobile setup
 

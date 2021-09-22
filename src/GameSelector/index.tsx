@@ -99,7 +99,7 @@ export default function ({ navigation, player }: any) {
             <Box
               shadow={3}
               mb={4}
-              width="full"
+              width="100%"
               rounded="lg"
               key={game.id}
               bg="white"

@@ -15,8 +15,7 @@ import {
   View,
 } from 'native-base';
 import React, { useEffect, useReducer } from 'react';
-import { RootStackParamList } from '../../App';
-import { API_URL } from '../constant';
+import { API_URL, GATEWAY_URL } from '../constant';
 import { Game, GameInitialization, User } from '../interface';
 import { Board } from './Board';
 import { Marble } from './Marble';
@@ -38,6 +37,7 @@ const reducer = (
 export default function GameState({ navigation, route, player }: any) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const gameId = route.params?.gameId;
+  let WS: any = undefined;
 
   const getGame = async () => {
     try {
@@ -96,8 +96,33 @@ export default function GameState({ navigation, route, player }: any) {
     navigation.goBack();
   };
 
+  const initWebSocket = () => {
+    WS = new WebSocket(GATEWAY_URL);
+    WS.onopen = () => {
+      WS.send(JSON.stringify({ event: 'initGame', data: { gameId } }));
+    };
+
+    WS.onmessage = (e: any) => {
+      const gameState = JSON.parse(e.data)?.gameState as Game;
+      dispatch({ type: 'game', value: gameState });
+    };
+
+    WS.onerror = (e: any) => {
+      const toast = useToast();
+      toast.show({
+        title: 'Error',
+        status: 'error',
+        description: 'An error occurred with the live function',
+      });
+    };
+  };
+
   useEffect(() => {
     getGame();
+    initWebSocket();
+    return () => {
+      if (WS) WS.close();
+    };
   }, []);
 
   return (
@@ -187,7 +212,7 @@ function GameInfo(props: any) {
       </HStack>
       <Stack p={4} space={2}>
         <Text fontSize="lg" bold color="white">
-          Player turn: Player #{game?.currentPlayer}
+          Player turn: #{game?.currentPlayer}
         </Text>
       </Stack>
     </Box>
@@ -213,14 +238,14 @@ function GameUser(props: any) {
         <HStack alignItems="center" justifyContent="space-between" space={4}>
           <Stack space={2}>
             <Heading size="md" ml={-1} color="white">
-              Player #{user.id}
+              {user.username} #{user.id}
             </Heading>
             <Heading size="xs" color="white" fontWeight="500" ml={-0.5} mt={-1}>
               {user.email}
             </Heading>
           </Stack>
           <Stack>
-            <Marble value={user.marbleColor} />
+            <Marble value={user.marbleColor} size={10} />
           </Stack>
         </HStack>
         <HStack>
@@ -229,9 +254,11 @@ function GameUser(props: any) {
               <Text bold color="white">
                 Marbles won:
               </Text>
-              {user?.marblesWon?.map((marble) => {
-                <Marble value={marble} size={4} />;
-              })}
+              <HStack>
+                {user?.marblesWon?.map((marble, index) => (
+                  <Marble value={marble} size={4} key={index} />
+                ))}
+              </HStack>
             </View>
           )}
         </HStack>
