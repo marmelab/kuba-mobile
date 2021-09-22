@@ -1,4 +1,3 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
   ArrowBackIcon,
   Box,
@@ -6,6 +5,7 @@ import {
   Flex,
   Heading,
   HStack,
+  Modal,
   ScrollView,
   SmallCloseIcon,
   Spinner,
@@ -13,6 +13,7 @@ import {
   Text,
   useToast,
   View,
+  Button,
 } from 'native-base';
 import React, { useEffect, useReducer } from 'react';
 import { API_URL, GATEWAY_URL } from '../constant';
@@ -34,11 +35,10 @@ const reducer = (
   return { ...state, [action.type]: action.value };
 };
 
-let WS: any = undefined;
-
 export default function GameState({ navigation, route, player }: any) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const gameId = route.params?.gameId;
+  const toast = useToast();
   let WS: any = undefined;
 
   const getGame = async () => {
@@ -78,7 +78,6 @@ export default function GameState({ navigation, route, player }: any) {
       const json = (await response.json()).data as User[];
       dispatch({ type: 'players', value: json });
     } catch (error) {
-      const toast = useToast();
       toast.show({
         title: 'Error',
         status: 'error',
@@ -98,6 +97,49 @@ export default function GameState({ navigation, route, player }: any) {
     navigation.goBack();
   };
 
+  const processMessage = (message: any) => {
+    const messageParsed = JSON.parse(message.data);
+
+    if (messageParsed.gameState) {
+      dispatch({ type: 'game', value: messageParsed.gameState });
+    }
+
+    if (messageParsed.event) {
+      if (messageParsed.event.switchPlayer) {
+        toast.show({
+          title: 'Player turn',
+          status: 'info',
+          description: `it's your ${
+            messageParsed.event.playerId !== player.id ? 'opponent' : ''
+          } turn`,
+        });
+      }
+
+      if (messageParsed.event.restart) {
+        toast.show({
+          title: 'Restart',
+          status: 'info',
+          description: `The game has restarted`,
+        });
+      }
+
+      if (messageParsed.event.hasWinner) {
+        toast.show({
+          title: 'Player turn',
+          status:
+            messageParsed.event.playerWinner === player.id
+              ? 'success'
+              : 'error',
+          description: `${
+            messageParsed.event.playerWinner === player.id
+              ? 'Congratulations !! '
+              : 'Better luck next time'
+          }`,
+        });
+      }
+    }
+  };
+
   const initWebSocket = () => {
     WS = new WebSocket(GATEWAY_URL);
     WS.onopen = () => {
@@ -105,12 +147,10 @@ export default function GameState({ navigation, route, player }: any) {
     };
 
     WS.onmessage = (e: any) => {
-      const gameState = JSON.parse(e.data)?.gameState as Game;
-      dispatch({ type: 'game', value: gameState });
+      processMessage(e);
     };
 
     WS.onerror = (e: any) => {
-      const toast = useToast();
       toast.show({
         title: 'Error',
         status: 'error',
@@ -142,6 +182,7 @@ export default function GameState({ navigation, route, player }: any) {
         </View>
       ) : !state.error ? (
         <ScrollView p={6} contentContainerStyle={{ paddingBottom: 24 }}>
+          <ModalWin navigation={navigation} showModal={state.game?.hasWinner} />
           <GameInfo game={state.game} />
           <Board board={state.game?.board} />
           {state.players.map((player) => (
@@ -268,5 +309,29 @@ function GameUser(props: any) {
         </HStack>
       </Stack>
     </Box>
+  );
+}
+
+function ModalWin({ showModal, navigation }: any) {
+  const navigateToGameSelector = () => {
+    navigation.navigate('GameSelector');
+  };
+
+  return (
+    <Modal isOpen={showModal} onClose={() => (showModal = false)}>
+      <Modal.Content maxWidth="400px">
+        <Modal.CloseButton />
+        <Modal.Header>The game is over</Modal.Header>
+        <Modal.Footer>
+          <Button
+            variant="ghost"
+            colorScheme="blueGray"
+            onPress={() => navigateToGameSelector()}
+          >
+            Go to your games
+          </Button>
+        </Modal.Footer>
+      </Modal.Content>
+    </Modal>
   );
 }
