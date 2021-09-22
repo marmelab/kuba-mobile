@@ -21,7 +21,6 @@ export default function ({ navigation }: Props) {
         ...errors,
         gameId: 'The game id cannot be empty',
       });
-      console.error('Validation Failed');
       return false;
     }
 

@@ -25,3 +25,10 @@ export interface User {
   isConnected?: boolean;
   token?: string | null;
 }
+
+export interface GameInitialization {
+  players: User[];
+  game: Game | undefined;
+  isLoading: boolean;
+  error: any | undefined;
+}

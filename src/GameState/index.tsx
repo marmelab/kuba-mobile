@@ -12,12 +12,13 @@ import {
   Spinner,
   Stack,
   Text,
+  useToast,
   View,
 } from 'native-base';
 import React, { useEffect, useReducer } from 'react';
 import { RootStackParamList } from '../../App';
 import Constants from 'expo-constants';
-import { Game, User } from '../interface';
+import { Game, GameInitialization, User } from '../interface';
 import { Board } from './Board';
 import { Marble } from './Marble';
 import { background } from 'styled-system';
@@ -25,12 +26,7 @@ import { background } from 'styled-system';
 type Props = NativeStackScreenProps<RootStackParamList, 'GameState'>;
 const API_URL = Constants?.manifest?.extra?.API_URL;
 
-const initialState: {
-  players: User[];
-  game: Game | undefined;
-  isLoading: boolean;
-  error: any | undefined;
-} = {
+const initialState: GameInitialization = {
   players: [],
   game: undefined,
   isLoading: true,
@@ -38,12 +34,7 @@ const initialState: {
 };
 
 const reducer = (
-  state: {
-    players: User[];
-    game: Game | undefined;
-    isLoading: boolean;
-    error: any | undefined;
-  },
+  state: GameInitialization,
   action: { type: string; value: any },
 ) => {
   return { ...state, [action.type]: action.value };
@@ -78,7 +69,12 @@ export default function GameState({ navigation, route }: Props) {
       const json = (await response.json()).data as User[];
       dispatch({ type: 'players', value: json });
     } catch (error) {
-      console.error(error);
+      const toast = useToast();
+      toast.show({
+        title: 'Error',
+        status: 'error',
+        description: 'The players could not be loaded',
+      });
     }
   };
 
@@ -112,9 +108,9 @@ export default function GameState({ navigation, route }: Props) {
         <ScrollView p={6} contentContainerStyle={{ paddingBottom: 24 }}>
           <GameInfo game={state.game} />
           <Board board={state.game?.board} />
-          {state.players.map((player) => {
-            return <GameUser user={getPlayerObject(player)} key={player.id} />;
-          })}
+          {state.players.map((player) => (
+            <GameUser user={getPlayerObject(player)} key={player.id} />
+          ))}
         </ScrollView>
       ) : (
         <View
