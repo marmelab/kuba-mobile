@@ -10,6 +10,12 @@ export const Marble = (props: any) => {
   );
 
   const marbleClick = async () => {
+    await props.setMarbleClicked({
+      x: props.cellIndex,
+      y: props.rowIndex,
+      value: props.value,
+      isExit: false,
+    });
     props.setMarbleClickedCoordinates({
       x: props.cellIndex,
       y: props.rowIndex,

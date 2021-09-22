@@ -36,6 +36,7 @@ export const Board = (props: any) => {
                 rowIndex={rowIndex}
                 cellIndex={cellIndex}
                 setMarbleClickedCoordinates={setMarbleClickedCoordinates}
+                setMarbleClicked={props.setMarbleClicked}
               />
             </Box>
           ))}
