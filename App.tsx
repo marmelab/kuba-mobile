@@ -11,13 +11,18 @@ import { UserTab } from './src/UserTab';
 const Stack = createNativeStackNavigator();
 const bottomNav = createBottomTabNavigator();
 
-export default function App() {
-  const [user, setUser] = React.useState<UserType>({
+const initUser = () => {
+  return {
     id: null,
     token: null,
     username: null,
+    email: null,
     isConnected: false,
-  });
+  }
+}
+
+export default function App() {
+  const [user, setUser] = React.useState<UserType>(initUser);
 
   return (
     <NativeBaseProvider>
@@ -26,8 +31,8 @@ export default function App() {
           <bottomNav.Navigator>
             <bottomNav.Screen name="Game Selector" component={GameSelector} />
 
-            <bottomNav.Screen name={`${user.username}`}>
-              {(props) => <UserTab {...props} user={user} />}
+            <bottomNav.Screen name={`Account`}>
+              {(props) => <UserTab {...props} user={user} setUser={setUser} initUser={initUser} />}
             </bottomNav.Screen>
           </bottomNav.Navigator>
         ) : (

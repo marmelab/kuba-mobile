@@ -36,6 +36,7 @@ export const LoginScreen = (props: LoginProps) => {
       return props.setUser({
         id: userDetails.id,
         username: userDetails.username,
+        email,
         token: userDetails.access_token,
         isConnected: true,
       });
@@ -125,7 +126,7 @@ const login = async (email: string, password: string) => {
       return await response.json();
     }
     return false;
-  } catch (error) {}
+  } catch (error) { }
 };
 
 type LoginProps = {
