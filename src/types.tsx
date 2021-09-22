@@ -4,4 +4,5 @@ export type UserType = {
   username: string | null;
   email: string | null;
   isConnected: boolean;
+  currentGameId: number | null
 };

@@ -4,6 +4,7 @@ const myValue = 'Kuba Mobile';
 export default {
   name: myValue,
   version: '1.0.0',
+  slug: 'kuba-mobile',
   extra: {
     API_URL: process.env.API_URL,
   },
@@ -21,6 +22,8 @@ export default {
     supportsTablet: true,
   },
   android: {
+    package: 'com.marmelab.kuba',
+    versionCode: 1,
     adaptiveIcon: {
       foregroundImage: './assets/adaptive-icon.png',
       backgroundColor: '#FFFFFF',
