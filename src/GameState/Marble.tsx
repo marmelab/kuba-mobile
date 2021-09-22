@@ -1,13 +1,28 @@
-import { Circle } from 'native-base';
+import { Circle, Pressable, Box } from 'native-base';
 import React from 'react';
 
 const MARBLE_COLOR_RADIAL = ['warmGray.300', 'black', 'white', 'red.700'];
 
 export const Marble = (props: any) => {
   const size = props.size;
+  const child = <Circle size={size} m={0} p={0} bgColor={getMarbleColor(props.value)} />;
+
+  const marbleClick = async () => {
+    props.setMarbleClickedCoordinates({ x: props.cellIndex, y: props.rowIndex })
+  }
+
+  if (props.value === 0) {
+    return child
+  } else {
   return (
-    <Circle size={size} m={0} p={0} bgColor={getMarbleColor(props.value)} />
-  );
+      <Pressable
+        p={0}
+        onPress={() => marbleClick()}
+      >
+        {child}
+      </Pressable>
+    )
+  }
 };
 
 const getMarbleColor = (value: number): string => {
