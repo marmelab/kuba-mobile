@@ -24,50 +24,53 @@ export const LoginScreen = (props: LoginProps) => {
 
   const handleLogin = async () => {
     setIsLoading(true);
-    const userDetails = await login(email, password);
-    if (userDetails) {
-      toast.show({
-        title: 'Logged In',
-        status: 'success',
-        description: 'Enjoy !',
-      });
+
+    try {
+      login(email, password)
+        .then((response) => {
+          if (response.status >= 200 && response.status < 300) {
+            return response.json();
+          } else {
+            return setErrorMessage(
+              'Something has gone wrong with the server, please retry later',
+            );
+          }
+        })
+        .then((userDetails) => {
+          if (userDetails) {
+            toast.show({
+              title: 'Logged In',
+              status: 'success',
+              description: 'Enjoy !',
+            });
+
+            return props.setUser({
+              id: userDetails.id,
+              username: userDetails.username,
+              email,
+              token: userDetails.access_token,
+              isConnected: true,
+            });
+          }
+        });
+    } catch (error) {
+      return setErrorMessage("Your email and your password don't match");
+    } finally {
       setIsLoading(false);
-      return props.setUser({
-        id: userDetails.id,
-        username: userDetails.username,
-        email,
-        token: userDetails.access_token,
-        isConnected: true,
-      });
     }
-    setIsLoading(false);
-    return setErrorMessage("Your email and your password don't match");
   };
 
   const login = async (email: string, password: string) => {
-    try {
-      const response = await fetch(`${API_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: email,
-          password,
-        }),
-      });
-
-      if (response.status >= 200 && response.status < 300) {
-        return await response.json();
-      }
-      return false;
-    } catch (error) {
-      toast.show({
-        title: 'Oops',
-        status: 'error',
-        description: `${error}`,
-      });
-    }
+    return fetch(`${API_URL}/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: email,
+        password,
+      }),
+    });
   };
 
   return (
