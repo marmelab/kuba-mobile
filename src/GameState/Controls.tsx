@@ -1,16 +1,11 @@
 import React from 'react';
 import { Box, HStack, Button } from 'native-base';
+import { DIRECTION_CHARS } from '../constants';
 
 interface ControlProps {
   checkAndMoveMarble: (direction: string) => void;
 }
 
-const DIRECTION_CHARS = {
-  north: '\u25b2',
-  east: '\u25ba',
-  south: '\u25bc',
-  west: '\u25c4',
-};
 export function Controls(props: ControlProps) {
   const { checkAndMoveMarble } = props;
 

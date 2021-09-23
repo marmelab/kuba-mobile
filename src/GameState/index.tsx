@@ -16,7 +16,7 @@ import {
   Button,
 } from 'native-base';
 import React, { useEffect, useReducer } from 'react';
-import { API_URL, GATEWAY_URL } from '../constant';
+import { API_URL, GATEWAY_URL } from '../constants';
 import { Game, GameInitialization, User } from '../interface';
 import { Board } from './Board';
 import { Marble } from './Marble';
