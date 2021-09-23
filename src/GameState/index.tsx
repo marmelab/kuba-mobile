@@ -28,6 +28,13 @@ const initialState: GameInitialization = {
   error: undefined,
 };
 
+const DIRECTION_CHARS = {
+  north: '\u25b2',
+  east: '\u25ba',
+  south: '\u25bc',
+  west: '\u25c4',
+};
+
 const reducer = (
   state: GameInitialization,
   action: { type: string; value: any },
@@ -236,6 +243,37 @@ export default function GameState({ navigation, route, player }: any) {
     }
   };
 
+  async function checkAndMoveMarble(direction: string) {
+    try {
+      if (await isMovePossible(gameId, player.token, player.id, direction)) {
+        if (state.game?.marbleClicked) {
+          const coordinates = {
+            x: state.game.marbleClicked.x,
+            y: state.game.marbleClicked.y,
+          };
+          const playerForAPI = getPlayerObject(player);
+          const response = await moveMarble(
+            gameId,
+            coordinates,
+            playerForAPI,
+            direction,
+            player.token,
+          );
+
+          const game = (await response.json()) as Game;
+
+          dispatch({ type: 'game', value: game });
+        }
+      }
+    } catch (error) {
+      toast.show({
+        title: 'Error',
+        status: 'error',
+        description: 'Something went wrong',
+      });
+    }
+  }
+
   return (
     <Flex flex={1}>
       {state.isLoading ? (
@@ -255,7 +293,7 @@ export default function GameState({ navigation, route, player }: any) {
             board={state.game?.board}
             setMarbleClicked={setMarbleClicked}
           />
-          <Controls gameState={state?.game} />
+          <Controls checkAndMoveMarble={checkAndMoveMarble} />
           {state.players.map((player) => (
             <GameUser user={getPlayerObject(player)} key={player.id} />
           ))}
@@ -289,68 +327,37 @@ export default function GameState({ navigation, route, player }: any) {
       )}
     </Flex>
   );
+}
 
-  async function checkAndMoveMarble(direction: string) {
-    try {
-      if (await isMovePossible(gameId, player.token, player.id, direction)) {
-        if (state.game?.marbleClicked) {
-          const coordinates = {
-            x: state.game.marbleClicked.x,
-            y: state.game.marbleClicked.y,
-          };
-          const playerForAPI = getPlayerObject(player);
-          const response = await moveMarble(
-            gameId,
-            coordinates,
-            playerForAPI,
-            direction,
-            player.token,
-          );
+interface ControlProps {
+  checkAndMoveMarble: (direction: string) => void;
+}
 
-          const game = (await response.json()) as Game;
+function Controls(props: ControlProps) {
+  const { checkAndMoveMarble } = props;
 
-          dispatch({ type: 'game', value: game });
-        }
-      }
-    } catch (error) {
-      toast.show({
-        title: 'Error',
-        status: 'error',
-        description: 'Something went wrong',
-      });
-    }
-  }
-
-  function Controls(props: any) {
-    const directionChars = {
-      north: '\u25b2',
-      east: '\u25ba',
-      south: '\u25bc',
-      west: '\u25c4',
-    };
-    return (
-      <Box shadow={1} rounded="lg">
-        <HStack p={4} space={2}>
-          <Button onPress={() => checkAndMoveMarble('W')}>
-            {' '}
-            {directionChars.west}{' '}
-          </Button>
-          <Button onPress={() => checkAndMoveMarble('N')}>
-            {' '}
-            {directionChars.north}{' '}
-          </Button>
-          <Button onPress={() => checkAndMoveMarble('E')}>
-            {' '}
-            {directionChars.east}{' '}
-          </Button>
-          <Button onPress={() => checkAndMoveMarble('S')}>
-            {' '}
-            {directionChars.south}{' '}
-          </Button>
-        </HStack>
-      </Box>
-    );
-  }
+  return (
+    <Box shadow={1} rounded="lg">
+      <HStack p={4} space={2}>
+        <Button onPress={() => checkAndMoveMarble('W')}>
+          {' '}
+          {DIRECTION_CHARS.west}{' '}
+        </Button>
+        <Button onPress={() => checkAndMoveMarble('N')}>
+          {' '}
+          {DIRECTION_CHARS.north}{' '}
+        </Button>
+        <Button onPress={() => checkAndMoveMarble('E')}>
+          {' '}
+          {DIRECTION_CHARS.east}{' '}
+        </Button>
+        <Button onPress={() => checkAndMoveMarble('S')}>
+          {' '}
+          {DIRECTION_CHARS.south}{' '}
+        </Button>
+      </HStack>
+    </Box>
+  );
 }
 
 function GameInfo(props: any) {
