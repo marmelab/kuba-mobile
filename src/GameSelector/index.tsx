@@ -1,5 +1,4 @@
 import { useIsFocused } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
   Box,
   Button,
@@ -15,6 +14,11 @@ import {
   Heading,
   Spinner,
   useToast,
+  Fab,
+  AddIcon,
+  FormControl,
+  Input,
+  Modal,
 } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { API_URL } from '../constant';
@@ -29,6 +33,9 @@ export default function ({ navigation, player }: any) {
   const [userGames, setUserGames] = useState<Game[]>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [errorUserGames, setErrorUserGames] = useState<any>();
+  const [showModal, setShowModal] = useState<any>(false);
+
+  const toast = useToast();
 
   const isFocused = useIsFocused();
 
@@ -49,13 +56,64 @@ export default function ({ navigation, player }: any) {
       const json = (await response.json()).data as Game[];
       setUserGames(json);
     } catch (error) {
-      const toast = useToast();
       toast.show({
         title: 'Error',
         status: 'error',
         description: 'The games could not be loaded',
       });
       setErrorUserGames(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const joinGame = async (gameId: number) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/games/${gameId}/join`, {
+        method: 'PUT',
+        body: JSON.stringify({ playerId: player.id }),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + player.token,
+        },
+      });
+      const json = (await response.json()) as Game;
+      if (json.id) {
+        navigateToGameState(json.id);
+      }
+    } catch (error) {
+      toast.show({
+        title: 'Error',
+        status: 'error',
+        description: `The game can't be joined`,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const startNewGame = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/games`, {
+        method: 'POST',
+        body: JSON.stringify({ playerId: player.id }),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + player.token,
+        },
+      });
+      const json = (await response.json()) as Game;
+      if (json.id) {
+        navigateToGameState(json.id);
+      }
+    } catch (error) {
+      toast.show({
+        title: 'Error',
+        status: 'error',
+        description: `The game can't be started`,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -167,6 +225,60 @@ export default function ({ navigation, player }: any) {
     );
   };
 
+  const ModalSelection = () => {
+    let gameId: number;
+    return (
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+        <Modal.Content maxWidth="400px">
+          <Modal.CloseButton />
+          <Modal.Header>Join new game</Modal.Header>
+          <Modal.Body>
+            <FormControl>
+              <FormControl.Label>Game ID</FormControl.Label>
+              <Input
+                type="number"
+                onChangeText={(value) => (gameId = +value)}
+              />
+            </FormControl>
+          </Modal.Body>
+          <Text
+            bold
+            italic
+            underline
+            onPress={() => {
+              setShowModal(false);
+              startNewGame();
+            }}
+          >
+            Want to start a new game ? (click here)
+          </Text>
+          <Modal.Footer>
+            <Button.Group space={2}>
+              <Button
+                variant="ghost"
+                colorScheme="blueGray"
+                onPress={() => {
+                  setShowModal(false);
+                }}
+              >
+                Cancel
+              </Button>
+
+              <Button
+                onPress={() => {
+                  setShowModal(false);
+                  joinGame(gameId);
+                }}
+              >
+                Join Game
+              </Button>
+            </Button.Group>
+          </Modal.Footer>
+        </Modal.Content>
+      </Modal>
+    );
+  };
+
   return (
     <Center flex={1}>
       {isLoading ? (
@@ -179,7 +291,19 @@ export default function ({ navigation, player }: any) {
           <Spinner size="lg" />
         </View>
       ) : (
-        <UserGamesList />
+        <View>
+          <UserGamesList />
+          <ModalSelection />
+          <Fab
+            borderRadius="full"
+            colorScheme="cyan"
+            placement="bottom-right"
+            onPress={() => {
+              setShowModal(true);
+            }}
+            icon={<AddIcon color="white" size="4" />}
+          />
+        </View>
       )}
     </Center>
   );
