@@ -253,10 +253,6 @@ export default function GameState({ navigation, route, player }: any) {
             direction,
             player.token,
           );
-
-          const game = (await response.json()) as Game;
-
-          dispatch({ type: 'game', value: game });
         }
       }
     } catch (error) {
