@@ -206,8 +206,6 @@ export default function GameState({ navigation, route, player }: any) {
     };
   }, []);
 
-  useEffect(() => () => WS.close(), []);
-
   return (
     <Flex flex={1}>
       {state.isLoading ? (

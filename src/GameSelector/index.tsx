@@ -1,3 +1,4 @@
+import { useIsFocused } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
   Box,
@@ -28,6 +29,8 @@ export default function ({ navigation, player }: any) {
   const [userGames, setUserGames] = useState<Game[]>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [errorUserGames, setErrorUserGames] = useState<any>();
+
+  const isFocused = useIsFocused();
 
   const getUserGames = async () => {
     try {
@@ -66,7 +69,7 @@ export default function ({ navigation, player }: any) {
 
   useEffect(() => {
     getUserGames();
-  }, []);
+  }, [isFocused]);
 
   const UserGamesList = () => {
     return (
