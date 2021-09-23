@@ -7,6 +7,7 @@ export default {
   slug: 'kuba-mobile',
   extra: {
     API_URL: process.env.API_URL,
+    GATEWAY_URL: process.env.GATEWAY_URL,
   },
   splash: {
     image: './assets/splashscreen.png',

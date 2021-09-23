@@ -1,6 +1,7 @@
 export interface Game {
   id: number;
   board: JSON | null;
+  graph?: JSON | null;
   currentPlayer: number | null;
   players: Player[] | null;
   directionSelected: string | null;
@@ -24,6 +25,7 @@ export interface User {
   marblesWon?: number[];
   isConnected?: boolean;
   token?: string | null;
+  username?: string;
 }
 
 export interface GameInitialization {
