@@ -98,50 +98,89 @@ export default function GameState({ navigation, route, player }: any) {
   };
 
   const processMessage = (message: any) => {
-    const messageParsed = JSON.parse(message.data);
+    try {
+      const messageParsed = JSON.parse(message.data);
 
-    if (messageParsed.gameState) {
-      dispatch({ type: 'game', value: messageParsed.gameState });
-    }
-
-    if (messageParsed.event) {
-      if (messageParsed.event.switchPlayer) {
-        toast.show({
-          title: 'Player turn',
-          status: 'info',
-          description: `it's your ${
-            messageParsed.event.playerId !== player.id ? 'opponent' : ''
-          } turn`,
-        });
+      if (messageParsed.gameState) {
+        dispatch({ type: 'game', value: messageParsed.gameState });
       }
 
-      if (messageParsed.event.restart) {
-        toast.show({
-          title: 'Restart',
-          status: 'info',
-          description: `The game has restarted`,
-        });
-      }
+      if (messageParsed.event) {
+        switch (messageParsed.event.type) {
+          case 'switchPlayer':
+            toast.show({
+              title: 'Player turn',
+              status: 'info',
+              description: `it's your ${
+                messageParsed.event.data.playerId !== player.id
+                  ? 'opponent'
+                  : ''
+              } turn`,
+            });
+            break;
 
-      if (messageParsed.event.hasWinner) {
-        toast.show({
-          title: 'Player turn',
-          status:
-            messageParsed.event.playerWinner === player.id
-              ? 'success'
-              : 'error',
-          description: `${
-            messageParsed.event.playerWinner === player.id
-              ? 'Congratulations !! '
-              : 'Better luck next time'
-          }`,
-        });
+          case 'restart':
+            toast.show({
+              title: 'Restart',
+              status: 'info',
+              description: `The game has restarted`,
+            });
+            break;
+
+          case 'joinGame':
+            toast.show({
+              title: 'Join',
+              status: 'info',
+              description: `A player has joined the game`,
+            });
+            break;
+
+          case 'hasWinner':
+            toast.show({
+              title: 'Player turn',
+              status:
+                messageParsed.event.data.playerWinner === player.id
+                  ? 'success'
+                  : 'error',
+              description: `${
+                messageParsed.event.data.playerWinner === player.id
+                  ? 'Congratulations !! '
+                  : 'Better luck next time'
+              }`,
+            });
+            break;
+
+          case 'error':
+            toast.show({
+              title: 'Error',
+              status: 'error',
+              description: messageParsed.event.message,
+            });
+            break;
+
+          default:
+            break;
+        }
       }
+    } catch (e) {
+      toast.show({
+        title: 'Error',
+        status: 'error',
+        description: `An error has appeared`,
+      });
     }
   };
 
   const initWebSocket = () => {
     WS = new WebSocket(GATEWAY_URL);
+    WS.addEventListener('error', () =>
+      toast.show({
+        title: 'Error',
+        status: 'error',
+        description: 'An error occurred with the live function',
+      }),
+    );
+
     WS.onopen = () => {
       WS.send(JSON.stringify({ event: 'initGame', data: { gameId } }));
     };
