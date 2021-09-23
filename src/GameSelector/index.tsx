@@ -25,7 +25,7 @@ export interface GameSelectorFormData {
   gameId: number;
 }
 
-export default function ({ navigation, player }: any) {
+export default function ({ navigation, player, setUser }: any) {
   const [userGames, setUserGames] = useState<Game[]>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [errorUserGames, setErrorUserGames] = useState<any>();
