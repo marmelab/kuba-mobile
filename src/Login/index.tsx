@@ -31,8 +31,13 @@ export const LoginScreen = (props: LoginProps) => {
           if (response.status >= 200 && response.status < 300) {
             return response.json();
           }
-          if (response.status === 401)
+          if (response.status === 401) {
             return setErrorMessage("Your email and your password don't match");
+          } else {
+            return setErrorMessage(
+              "something's wrong with the server, please try again later",
+            );
+          }
         })
         .then((userDetails) => {
           if (userDetails) {
