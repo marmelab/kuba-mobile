@@ -30,11 +30,9 @@ export const LoginScreen = (props: LoginProps) => {
         .then((response) => {
           if (response.status >= 200 && response.status < 300) {
             return response.json();
-          } else {
-            return setErrorMessage(
-              'Something has gone wrong with the server, please retry later',
-            );
           }
+          if (response.status === 401)
+            return setErrorMessage("Your email and your password don't match");
         })
         .then((userDetails) => {
           if (userDetails) {
@@ -54,7 +52,9 @@ export const LoginScreen = (props: LoginProps) => {
           }
         });
     } catch (error) {
-      return setErrorMessage("Your email and your password don't match");
+      return setErrorMessage(
+        "something's wrong with the server, please try again later",
+      );
     } finally {
       setIsLoading(false);
     }
