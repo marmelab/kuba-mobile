@@ -59,9 +59,6 @@ export default function ({ navigation, player, setUser }: any) {
   };
 
   const navigateToGameState = (id: number) => {
-    /* setUser({
-      currentGameId: id
-    }) */
     navigation.navigate('GameState', {
       gameId: id,
     });

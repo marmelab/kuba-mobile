@@ -8,8 +8,6 @@ import GameSelector from './src/GameSelector';
 import { UserType } from './src/types';
 import { UserTab } from './src/UserTab';
 
-
-
 import GameState from './src/GameState';
 import { User } from './src/interface';
 
@@ -30,27 +28,27 @@ const config = {
   },
 };
 
-const initUser = (): UserType => {
-  return {
-    id: null,
-    token: null,
-    username: null,
-    email: null,
-    isConnected: false
-  }
-}
+const initUser = (): UserType => ({
+  id: null,
+  token: null,
+  username: null,
+  email: null,
+  isConnected: false,
+});
+
 export default function App() {
   const [user, setUser] = React.useState<UserType>(initUser);
 
   return (
     <NativeBaseProvider config={config}>
       <NavigationContainer>
-
         {user.isConnected ? (
           <>
             <bottomNav.Navigator>
               <bottomNav.Screen name="GameSelector">
-                {(props) => <GameSelector {...props} player={user} setUser={setUser} />}
+                {(props) => (
+                  <GameSelector {...props} player={user} setUser={setUser} />
+                )}
               </bottomNav.Screen>
 
               <bottomNav.Screen name="GameState">
@@ -58,21 +56,25 @@ export default function App() {
               </bottomNav.Screen>
 
               <bottomNav.Screen name="account">
-                {(props) => <UserTab {...props} user={user} setUser={setUser} initUser={initUser} />}
+                {(props) => (
+                  <UserTab
+                    {...props}
+                    user={user}
+                    setUser={setUser}
+                    initUser={initUser}
+                  />
+                )}
               </bottomNav.Screen>
             </bottomNav.Navigator>
-
           </>
         ) : (
           <Stack.Navigator>
             <Stack.Screen name="Login">
               {(props) => <LoginScreen {...props} setUser={setUser} />}
             </Stack.Screen>
-          </Stack.Navigator >
-        )
-        }
-
-      </NavigationContainer >
-    </NativeBaseProvider >
+          </Stack.Navigator>
+        )}
+      </NavigationContainer>
+    </NativeBaseProvider>
   );
 }

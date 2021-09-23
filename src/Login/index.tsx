@@ -44,6 +44,32 @@ export const LoginScreen = (props: LoginProps) => {
     return setErrorMessage("Your email and your password don't match");
   };
 
+  const login = async (email: string, password: string) => {
+    try {
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: email,
+          password,
+        }),
+      });
+
+      if (response.status >= 200 && response.status < 300) {
+        return await response.json();
+      }
+      return false;
+    } catch (error) {
+      toast.show({
+        title: 'Oops',
+        status: 'error',
+        description: `${error}`,
+      });
+    }
+  };
+
   return (
     <Box safeArea flex={1} p={2} w="90%" mx="auto">
       <Heading size="lg" color="primary.500">
@@ -106,26 +132,6 @@ export const LoginScreen = (props: LoginProps) => {
       </VStack>
     </Box>
   );
-};
-
-const login = async (email: string, password: string) => {
-  try {
-    const response = await fetch(`${API_URL}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        username: email,
-        password,
-      }),
-    });
-
-    if (response.status >= 200 && response.status < 300) {
-      return await response.json();
-    }
-    return false;
-  } catch (error) { }
 };
 
 type LoginProps = {
