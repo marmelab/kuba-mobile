@@ -33,11 +33,10 @@ export const LoginScreen = (props: LoginProps) => {
           }
           if (response.status === 401) {
             return setErrorMessage("Your email and your password don't match");
-          } else {
-            return setErrorMessage(
-              "something's wrong with the server, please try again later",
-            );
           }
+          return setErrorMessage(
+            "something's wrong with the server, please try again later",
+          );
         })
         .then((userDetails) => {
           if (userDetails) {
