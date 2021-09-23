@@ -20,19 +20,13 @@ import { API_URL, GATEWAY_URL } from '../constant';
 import { Game, GameInitialization, User } from '../interface';
 import { Board } from './Board';
 import { Marble } from './Marble';
+import { Controls } from './Controls';
 
 const initialState: GameInitialization = {
   players: [],
   game: undefined,
   isLoading: true,
   error: undefined,
-};
-
-const DIRECTION_CHARS = {
-  north: '\u25b2',
-  east: '\u25ba',
-  south: '\u25bc',
-  west: '\u25c4',
 };
 
 const reducer = (
@@ -326,37 +320,6 @@ export default function GameState({ navigation, route, player }: any) {
         </View>
       )}
     </Flex>
-  );
-}
-
-interface ControlProps {
-  checkAndMoveMarble: (direction: string) => void;
-}
-
-function Controls(props: ControlProps) {
-  const { checkAndMoveMarble } = props;
-
-  return (
-    <Box shadow={1} rounded="lg">
-      <HStack p={4} space={2}>
-        <Button onPress={() => checkAndMoveMarble('W')}>
-          {' '}
-          {DIRECTION_CHARS.west}{' '}
-        </Button>
-        <Button onPress={() => checkAndMoveMarble('N')}>
-          {' '}
-          {DIRECTION_CHARS.north}{' '}
-        </Button>
-        <Button onPress={() => checkAndMoveMarble('E')}>
-          {' '}
-          {DIRECTION_CHARS.east}{' '}
-        </Button>
-        <Button onPress={() => checkAndMoveMarble('S')}>
-          {' '}
-          {DIRECTION_CHARS.south}{' '}
-        </Button>
-      </HStack>
-    </Box>
   );
 }
 
