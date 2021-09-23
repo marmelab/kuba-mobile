@@ -84,6 +84,9 @@ export default function GameState({ navigation, route, player }: any) {
         status: 'error',
         description: 'The players could not be loaded',
       });
+      interface ControlProps {
+        checkAndMoveMarble: (direction: string) => void;
+      }
     }
   };
 
@@ -317,37 +320,6 @@ export default function GameState({ navigation, route, player }: any) {
       )}
     </Flex>
   );
-
-  function Controls(props: any) {
-    const directionChars = {
-      north: '\u25b2',
-      east: '\u25ba',
-      south: '\u25bc',
-      west: '\u25c4',
-    };
-    return (
-      <Box shadow={1} rounded="lg">
-        <HStack p={4} space={2}>
-          <Button onPress={() => checkAndMoveMarble('W')}>
-            {' '}
-            {directionChars.west}{' '}
-          </Button>
-          <Button onPress={() => checkAndMoveMarble('N')}>
-            {' '}
-            {directionChars.north}{' '}
-          </Button>
-          <Button onPress={() => checkAndMoveMarble('E')}>
-            {' '}
-            {directionChars.east}{' '}
-          </Button>
-          <Button onPress={() => checkAndMoveMarble('S')}>
-            {' '}
-            {directionChars.south}{' '}
-          </Button>
-        </HStack>
-      </Box>
-    );
-  }
 }
 
 function GameInfo(props: any) {
