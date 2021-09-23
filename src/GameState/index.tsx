@@ -267,6 +267,7 @@ export default function GameState({ navigation, route, player }: any) {
     }
   }
 
+  console.log('GameState', state.game);
   return (
     <Flex flex={1}>
       {state.isLoading ? (
@@ -285,6 +286,10 @@ export default function GameState({ navigation, route, player }: any) {
           <Board
             board={state.game?.board}
             setMarbleClicked={setMarbleClicked}
+            preview={false}
+            player={getPlayerObject(player)}
+            currentPlayer={state.game?.currentPlayer}
+            checkAndMoveMarble={checkAndMoveMarble}
           />
           <Controls checkAndMoveMarble={checkAndMoveMarble} />
           {state.players.map((player) => (

@@ -9,3 +9,10 @@ export const DIRECTION_CHARS = {
   south: '\u25bc',
   west: '\u25c4',
 };
+
+export const DIRECTIONS_ICONS = {
+  north: 'arrow-bold-up',
+  east: 'arrow-bold-right',
+  south: 'arrow-bold-down',
+  west: 'arrow-bold-left',
+};

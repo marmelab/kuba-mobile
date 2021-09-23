@@ -8,8 +8,12 @@ export const Board = (props: any) => {
   const marbleColorSize = props.preview ? 4 : 12;
   const marbleEmptySize = props.preview ? 2 : 4;
 
-  const [marbleClickedCoordinates, setMarbleClickedCoordinates] =
-    React.useState<{ x: number; y: number } | null>(null);
+  const [marbleHasBeenClicked, setmarbleHasBeenClicked] = React.useState(false);
+
+  const marblesDisabled =
+    props.preview || props.player?.id !== props.currentPlayer;
+
+  console.log('marble color ?', props.player);
 
   return (
     <Stack mb={4}>
@@ -21,12 +25,7 @@ export const Board = (props: any) => {
               alignItems="center"
               justifyContent="center"
               key={cellIndex}
-              bg={
-                marbleClickedCoordinates?.x === cellIndex &&
-                marbleClickedCoordinates?.y === rowIndex
-                  ? '#0bf220'
-                  : '#948e8b'
-              }
+              bg="#948e8b"
               m={0}
               p={0}
             >
@@ -35,8 +34,11 @@ export const Board = (props: any) => {
                 size={cell === 0 ? marbleEmptySize : marbleColorSize}
                 rowIndex={rowIndex}
                 cellIndex={cellIndex}
-                setMarbleClickedCoordinates={setMarbleClickedCoordinates}
                 setMarbleClicked={props.setMarbleClicked}
+                disabled={marblesDisabled || props.player.marbleColor !== cell}
+                preview={props.preview}
+                setmarbleHasBeenClicked={setmarbleHasBeenClicked}
+                checkAndMoveMarble={props.checkAndMoveMarble}
               />
             </Box>
           ))}
@@ -44,4 +46,18 @@ export const Board = (props: any) => {
       ))}
     </Stack>
   );
+};
+
+const isClicked = (
+  marbleClickedCoordinates: { x: number; y: number } | null,
+  rowIndex: number,
+  cellIndex: number,
+) => {
+  if (
+    marbleClickedCoordinates?.x === cellIndex &&
+    marbleClickedCoordinates?.y === rowIndex
+  ) {
+    return true;
+  }
+  return false;
 };
