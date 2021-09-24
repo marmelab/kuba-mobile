@@ -151,15 +151,17 @@ export default function ({ navigation, player, setUser }: any) {
             startNewGame={startNewGame}
             joinGame={joinGame}
           />
-          <Fab
-            borderRadius="full"
-            colorScheme="cyan"
-            placement="bottom-right"
-            onPress={() => {
-              setShowModal(true);
-            }}
-            icon={<AddIcon color="white" size="4" />}
-          />
+          {isFocused ? (
+            <Fab
+              borderRadius="full"
+              colorScheme="cyan"
+              placement="bottom-right"
+              onPress={() => {
+                setShowModal(true);
+              }}
+              icon={<AddIcon color="white" size="4" />}
+            />
+          ) : null}
         </View>
       )}
     </ScrollView>

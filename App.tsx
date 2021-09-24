@@ -50,7 +50,7 @@ export default function App() {
                 options={({ navigation }) => ({
                   headerRight: () => (
                     <Pressable onPress={() => navigation.navigate('Account')}>
-                      <Avatar bg="green.500" mr={4}>
+                      <Avatar bg="green.500" mr={4} size="sm">
                         {user?.username?.charAt(0).toUpperCase()}
                       </Avatar>
                     </Pressable>
