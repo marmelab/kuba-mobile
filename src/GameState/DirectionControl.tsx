@@ -12,7 +12,7 @@ export const DirectionControl = (props: DirectionControlProps) => {
           left={'4px'}
           onPress={() => props.checkAndMoveMarble('N')}
         >
-          <Entypo name="arrow-bold-up" size={40} m={0} p={0} color="black" />
+          <Entypo name="arrow-bold-up" size={40} m={0} p={0} color="yellow" />
         </Pressable>
       );
     case 'E':
@@ -23,7 +23,13 @@ export const DirectionControl = (props: DirectionControlProps) => {
           left={'50px'}
           onPress={() => props.checkAndMoveMarble('E')}
         >
-          <Entypo name="arrow-bold-right" size={40} m={0} p={0} color="black" />
+          <Entypo
+            name="arrow-bold-right"
+            size={40}
+            m={0}
+            p={0}
+            color="yellow"
+          />
         </Pressable>
       );
     case 'S':
@@ -34,7 +40,7 @@ export const DirectionControl = (props: DirectionControlProps) => {
           left={'4px'}
           onPress={() => props.checkAndMoveMarble('S')}
         >
-          <Entypo name="arrow-bold-down" size={40} m={0} p={0} color="black" />
+          <Entypo name="arrow-bold-down" size={40} m={0} p={0} color="yellow" />
         </Pressable>
       );
     case 'W':
@@ -45,7 +51,7 @@ export const DirectionControl = (props: DirectionControlProps) => {
           left={'-42px'}
           onPress={() => props.checkAndMoveMarble('W')}
         >
-          <Entypo name="arrow-bold-left" size={40} m={0} p={0} color="black" />
+          <Entypo name="arrow-bold-left" size={40} m={0} p={0} color="yellow" />
         </Pressable>
       );
     default:

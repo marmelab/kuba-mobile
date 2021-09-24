@@ -14,36 +14,53 @@ export const Board = (props: any) => {
     props.preview || props.player?.id !== props.currentPlayer;
 
   console.log('marble color ?', props.player);
-
   return (
     <Stack mb={4}>
-      {board.map((row: [], rowIndex: number) => (
-        <HStack alignItems="center" key={rowIndex}>
-          {row.map((cell, cellIndex) => (
-            <Box
-              size={boardSize}
-              alignItems="center"
-              justifyContent="center"
-              key={cellIndex}
-              bg="#948e8b"
-              m={0}
-              p={0}
-            >
-              <Marble
-                value={cell}
-                size={cell === 0 ? marbleEmptySize : marbleColorSize}
-                rowIndex={rowIndex}
-                cellIndex={cellIndex}
-                setMarbleClicked={props.setMarbleClicked}
-                disabled={marblesDisabled || props.player.marbleColor !== cell}
-                preview={props.preview}
-                setmarbleHasBeenClicked={setmarbleHasBeenClicked}
-                checkAndMoveMarble={props.checkAndMoveMarble}
-              />
-            </Box>
-          ))}
-        </HStack>
-      ))}
+      {board.map((row: [], rowIndex: number) => {
+        let zIndexHstack: number = 0;
+        if (props.marbleClicked?.y === rowIndex) {
+          zIndexHstack = 250;
+        }
+        return (
+          <HStack alignItems="center" key={rowIndex} zIndex={zIndexHstack}>
+            {row.map((cell, cellIndex) => {
+              let zIndex = 0;
+              if (
+                props.marbleClicked?.x === cellIndex &&
+                props.marbleClicked?.y === rowIndex
+              ) {
+                zIndex = 300;
+              }
+              return (
+                <Box
+                  size={boardSize}
+                  alignItems="center"
+                  justifyContent="center"
+                  key={cellIndex}
+                  bg="#948e8b"
+                  m={0}
+                  p={0}
+                  zIndex={zIndex}
+                >
+                  <Marble
+                    value={cell}
+                    size={cell === 0 ? marbleEmptySize : marbleColorSize}
+                    rowIndex={rowIndex}
+                    cellIndex={cellIndex}
+                    setMarbleClicked={props.setMarbleClicked}
+                    disabled={
+                      marblesDisabled || props.player.marbleColor !== cell
+                    }
+                    preview={props.preview}
+                    setmarbleHasBeenClicked={setmarbleHasBeenClicked}
+                    checkAndMoveMarble={props.checkAndMoveMarble}
+                  />
+                </Box>
+              );
+            })}
+          </HStack>
+        );
+      })}
     </Stack>
   );
 };

@@ -285,6 +285,7 @@ export default function GameState({ navigation, route, player }: any) {
           <GameInfo game={state.game} />
           <Board
             board={state.game?.board}
+            marbleClicked={state.game?.marbleClicked}
             setMarbleClicked={setMarbleClicked}
             preview={false}
             player={getPlayerObject(player)}
