@@ -39,12 +39,35 @@ const initUser = (): UserType => ({
 export default function App() {
   const [user, setUser] = React.useState<UserType>(initUser);
 
+  const HomeTabs = () => {
+    return (
+      <bottomNav.Navigator>
+        <bottomNav.Screen name="GameSelector">
+          {(props) => (
+            <GameSelector {...props} player={user} setUser={setUser} />
+          )}
+        </bottomNav.Screen>
+
+        <bottomNav.Screen name="account">
+          {(props) => (
+            <UserTab
+              {...props}
+              user={user}
+              setUser={setUser}
+              initUser={initUser}
+            />
+          )}
+        </bottomNav.Screen>
+      </bottomNav.Navigator>
+    );
+  };
+
   return (
     <NativeBaseProvider config={config}>
       <NavigationContainer>
         {user.isConnected ? (
           <>
-            <bottomNav.Navigator>
+            {/* <bottomNav.Navigator>
               <bottomNav.Screen name="GameSelector">
                 {(props) => (
                   <GameSelector {...props} player={user} setUser={setUser} />
@@ -65,7 +88,16 @@ export default function App() {
                   />
                 )}
               </bottomNav.Screen>
-            </bottomNav.Navigator>
+            </bottomNav.Navigator> */}
+            <Stack.Navigator>
+              <Stack.Screen
+                name="GameSelector"
+                component={HomeTabs}
+              ></Stack.Screen>
+              <Stack.Screen name="GameState">
+                {(props) => <GameState {...props} player={user} />}
+              </Stack.Screen>
+            </Stack.Navigator>
           </>
         ) : (
           <Stack.Navigator>
