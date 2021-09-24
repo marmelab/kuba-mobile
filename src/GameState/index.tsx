@@ -267,7 +267,6 @@ export default function GameState({ navigation, route, player }: any) {
     }
   }
 
-  console.log('GameState', state.game);
   return (
     <Flex flex={1}>
       {state.isLoading ? (
@@ -289,7 +288,9 @@ export default function GameState({ navigation, route, player }: any) {
             setMarbleClicked={setMarbleClicked}
             preview={false}
             player={getPlayerObject(player)}
-            currentPlayer={state.game?.currentPlayer}
+            currentPlayer={
+              state.game?.currentPlayer || state.game?.currentPlayerId
+            }
             checkAndMoveMarble={checkAndMoveMarble}
           />
           <Controls checkAndMoveMarble={checkAndMoveMarble} />
@@ -365,7 +366,7 @@ function GameInfo(props: any) {
       </HStack>
       <Stack p={4} space={2}>
         <Text fontSize="lg" bold color="white">
-          Player turn: #{game?.currentPlayer}
+          Player turn: #{game?.currentPlayer || game?.currentPlayerId}
         </Text>
       </Stack>
     </Box>

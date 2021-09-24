@@ -2,7 +2,8 @@ export interface Game {
   id: number;
   board: JSON | null;
   graph?: JSON | null;
-  currentPlayer: number | null;
+  currentPlayer?: number | null;
+  currentPlayerId?: number | null;
   players: Player[] | null;
   directionSelected: string | null;
   marbleClicked: Node | null;
@@ -40,4 +41,4 @@ export interface Node {
   y: number;
   value: number;
   isExit: Boolean;
-};
+}

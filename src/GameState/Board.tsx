@@ -10,10 +10,10 @@ export const Board = (props: any) => {
 
   const [marbleHasBeenClicked, setmarbleHasBeenClicked] = React.useState(false);
 
-  const marblesDisabled =
-    props.preview || props.player?.id !== props.currentPlayer;
+  const isCurrentPlayer = props.player?.id === props.currentPlayer;
 
-  console.log('marble color ?', props.player);
+  const marblesDisabled = props.preview || !isCurrentPlayer;
+
   return (
     <Stack mb={4}>
       {board.map((row: [], rowIndex: number) => {
