@@ -17,7 +17,7 @@ import {
   useToast,
 } from 'native-base';
 import React, { useEffect, useState } from 'react';
-import { API_URL } from '../constant';
+import { API_URL } from '../constants';
 import { Board } from '../GameState/Board';
 import { Game } from '../interface';
 

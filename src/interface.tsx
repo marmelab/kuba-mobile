@@ -5,7 +5,7 @@ export interface Game {
   currentPlayer: number | null;
   players: Player[] | null;
   directionSelected: string | null;
-  marbleClicked: JSON | null;
+  marbleClicked: Node | null;
   hasWinner: boolean;
   started: boolean;
 }
@@ -34,3 +34,10 @@ export interface GameInitialization {
   isLoading: boolean;
   error: any | undefined;
 }
+
+export interface Node {
+  x: number;
+  y: number;
+  value: number;
+  isExit: Boolean;
+};

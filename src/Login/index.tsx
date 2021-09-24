@@ -9,7 +9,7 @@ import {
   useToast,
 } from 'native-base';
 
-import { API_URL } from '../constant';
+import { API_URL } from '../constants';
 
 export const LoginScreen = (props: LoginProps) => {
   const [show, setShow] = React.useState<boolean>(false);

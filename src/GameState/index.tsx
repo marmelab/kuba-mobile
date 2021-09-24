@@ -16,10 +16,11 @@ import {
   Button,
 } from 'native-base';
 import React, { useEffect, useReducer } from 'react';
-import { API_URL, GATEWAY_URL } from '../constant';
+import { API_URL, GATEWAY_URL } from '../constants';
 import { Game, GameInitialization, User } from '../interface';
 import { Board } from './Board';
 import { Marble } from './Marble';
+import { Controls } from './Controls';
 
 const initialState: GameInitialization = {
   players: [],
@@ -206,6 +207,63 @@ export default function GameState({ navigation, route, player }: any) {
     };
   }, []);
 
+  const setMarbleClicked = async (marbleClicked: {
+    x: number;
+    y: number;
+    value: number;
+    isExit: boolean;
+  }) => {
+    try {
+      const response = await fetch(
+        `${API_URL}/games/${gameId}/marble-clicked`,
+        {
+          method: 'PUT',
+          body: JSON.stringify({ marbleClicked }),
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + player.token,
+          },
+        },
+      );
+      if (response.status >= 200 && response.status < 300) {
+        dispatch({ type: 'game', value: { ...state.game, marbleClicked } });
+      }
+    } catch (error) {
+      toast.show({
+        title: 'Error',
+        status: 'error',
+        description: 'Cannot select this marble',
+      });
+    }
+  };
+
+  async function checkAndMoveMarble(direction: string) {
+    try {
+      if (await isMovePossible(gameId, player.token, player.id, direction)) {
+        if (state.game?.marbleClicked) {
+          const coordinates = {
+            x: state.game.marbleClicked.x,
+            y: state.game.marbleClicked.y,
+          };
+          const playerForAPI = getPlayerObject(player);
+          const response = await moveMarble(
+            gameId,
+            coordinates,
+            playerForAPI,
+            direction,
+            player.token,
+          );
+        }
+      }
+    } catch (error) {
+      toast.show({
+        title: 'Error',
+        status: 'error',
+        description: 'Something went wrong',
+      });
+    }
+  }
+
   return (
     <Flex flex={1}>
       {state.isLoading ? (
@@ -221,7 +279,11 @@ export default function GameState({ navigation, route, player }: any) {
         <ScrollView p={6} contentContainerStyle={{ paddingBottom: 24 }}>
           <ModalWin navigation={navigation} showModal={state.game?.hasWinner} />
           <GameInfo game={state.game} />
-          <Board board={state.game?.board} />
+          <Board
+            board={state.game?.board}
+            setMarbleClicked={setMarbleClicked}
+          />
+          <Controls checkAndMoveMarble={checkAndMoveMarble} />
           {state.players.map((player) => (
             <GameUser user={getPlayerObject(player)} key={player.id} />
           ))}
@@ -371,4 +433,46 @@ function ModalWin({ showModal, navigation }: any) {
       </Modal.Content>
     </Modal>
   );
+}
+
+async function isMovePossible(
+  gameId: number,
+  playerToken: string,
+  player: number,
+  direction: string,
+) {
+  const response = await fetch(
+    `${API_URL}/games/${gameId}/authorized-move?player=${player}&direction=${direction}`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + playerToken,
+      },
+    },
+  );
+  if (response.status >= 200 && response.status < 300) {
+    return await response.json();
+  }
+}
+
+async function moveMarble(
+  gameId: number,
+  marbleClicked: any,
+  player: any,
+  direction: string,
+  playerToken: string,
+) {
+  return await fetch(`${API_URL}/games/${gameId}/move-marble`, {
+    method: 'POST',
+    body: JSON.stringify({
+      coordinates: marbleClicked,
+      direction,
+      player,
+    }),
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + playerToken,
+    },
+  });
 }
