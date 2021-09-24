@@ -356,7 +356,7 @@ function GameInfo(props: any) {
       </HStack>
       <Stack p={4} space={2}>
         <Text fontSize="lg" bold color="white">
-          Player turn: #{game?.currentPlayer}
+          Player turn: #{game?.currentPlayer | game?.currentPlayerId}
         </Text>
       </Stack>
     </Box>
