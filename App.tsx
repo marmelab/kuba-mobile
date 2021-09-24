@@ -11,6 +11,7 @@ import { UserTab } from './src/UserTab';
 import GameState from './src/GameState';
 import { User } from './src/interface';
 import { Pressable } from 'react-native';
+import { Home } from './src/Home';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -77,7 +78,15 @@ export default function App() {
             </Stack.Navigator>
           </>
         ) : (
-          <Stack.Navigator>
+          <Stack.Navigator
+            screenOptions={{
+              headerTintColor: 'black',
+              headerTitleStyle: {
+                fontWeight: 'bold',
+              },
+            }}
+          >
+            <Stack.Screen name="Home">{(props) => <Home />}</Stack.Screen>
             <Stack.Screen name="Login">
               {(props) => <LoginScreen {...props} setUser={setUser} />}
             </Stack.Screen>
