@@ -13,10 +13,62 @@ export const UserGamesList = ({
   userGames,
   navigateToGameState,
 }: UserGamesListProps) => {
-  const [filter, setFilter] = useState<'all' | 'inProgress' | 'finished'>();
+  const [filter, setFilter] = useState<'all' | 'inProgress' | 'finished'>(
+    'all',
+  );
+
+  const filterGames = (filter: string) => {
+    switch (filter) {
+      case 'inProgress': {
+        return userGames?.filter((game) => !game.hasWinner);
+      }
+
+      case 'finished': {
+        return (userGames = userGames?.filter((game) => !!game.hasWinner));
+      }
+
+      default:
+        return userGames;
+    }
+  };
+
+  userGames = filterGames(filter);
 
   return (
     <View>
+      <Flex direction="row" mb={4}>
+        <Pressable onPress={() => setFilter('all')}>
+          <Badge
+            p="2"
+            mr={3}
+            rounded="lg"
+            colorScheme={filter === 'all' ? 'primary' : 'coolGray'}
+          >
+            All
+          </Badge>
+        </Pressable>
+
+        <Pressable onPress={() => setFilter('inProgress')}>
+          <Badge
+            p="2"
+            mr={3}
+            rounded="lg"
+            colorScheme={filter === 'inProgress' ? 'primary' : 'coolGray'}
+          >
+            In progress
+          </Badge>
+        </Pressable>
+
+        <Pressable onPress={() => setFilter('finished')}>
+          <Badge
+            p="2"
+            rounded="lg"
+            colorScheme={filter === 'finished' ? 'primary' : 'coolGray'}
+          >
+            Finished
+          </Badge>
+        </Pressable>
+      </Flex>
       {!userGames?.length && (
         <Box
           background="red.700"
@@ -39,25 +91,6 @@ export const UserGamesList = ({
 
       {userGames && (
         <View>
-          <Flex direction="row" mb={4}>
-            <Pressable onPress={() => setFilter('all')}>
-              <Badge p="2" mr={3} rounded="lg">
-                All
-              </Badge>
-            </Pressable>
-
-            <Pressable onPress={() => setFilter('inProgress')}>
-              <Badge p="2" mr={3} rounded="lg">
-                In progress
-              </Badge>
-            </Pressable>
-
-            <Pressable onPress={() => setFilter('finished')}>
-              <Badge p="2" rounded="lg">
-                Finished
-              </Badge>
-            </Pressable>
-          </Flex>
           <FlatList
             data={userGames}
             renderItem={({ item }) => (

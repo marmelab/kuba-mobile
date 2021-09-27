@@ -10,6 +10,9 @@ import {
   useToast,
   VStack,
   Text,
+  Button,
+  Stack,
+  Center,
 } from 'native-base';
 import { ScrollView } from 'react-native';
 import { Tile } from './Tile';
@@ -23,23 +26,25 @@ import { UserGame } from '../GameSelector/UserGame';
 export function Home({ navigation, player }: any) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [userLastGame, setUserLastGame] = useState<Game>();
+  const [userLastGames, setUserLastGame] = useState<Game[]>();
   const toast = useToast();
   const { navigateToGameState, navigateToGameSelector } =
     useNavigation(navigation);
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    getLastGame();
+    getLastGames();
   }, [isFocused]);
 
-  const getLastGame = async () => {
+  const getLastGames = async () => {
     setIsLoading(true);
     try {
       const response = await fetch(
         `${API_URL}/games?range=${encodeURI(
-          JSON.stringify([0, 1]),
-        )}&sort=${encodeURI(JSON.stringify(['id', 'DESC']))}`,
+          JSON.stringify([0, 2]),
+        )}&sort=${encodeURI(JSON.stringify(['id', 'DESC']))}&filter=${encodeURI(
+          JSON.stringify({ playerNumber: [player.id] }),
+        )}`,
         {
           method: 'GET',
           headers: {
@@ -51,7 +56,7 @@ export function Home({ navigation, player }: any) {
       if (!response.ok) {
         throw Error(response.statusText);
       }
-      const json = (await response.json()).data[0] as Game;
+      const json = (await response.json()).data as Game[];
       setUserLastGame(json);
     } catch (error) {
       toast.show({
@@ -134,7 +139,7 @@ export function Home({ navigation, player }: any) {
           <HStack space={3} justifyContent="space-between">
             <Tile
               bgLinearColors={['orange.400', 'amber.200']}
-              heading="New game"
+              heading={{ title: 'New game', color: 'black' }}
               onPress={() => startNewGame()}
               body={
                 <Circle size={60} bg="orange.400">
@@ -144,7 +149,7 @@ export function Home({ navigation, player }: any) {
             />
             <Tile
               bgLinearColors={['blue.800', 'lightBlue.300']}
-              heading="Join Game"
+              heading={{ title: 'Join Game', color: 'white' }}
               onPress={() => setShowModal(true)}
               body={
                 <Circle size={60} bg="blue.400">
@@ -156,16 +161,61 @@ export function Home({ navigation, player }: any) {
 
           <HStack space={3} justifyContent="space-between">
             {isLoading ? (
-              <Spinner size="lg" />
-            ) : (
+              <Center flex={1}>
+                <Spinner size="lg" />
+              </Center>
+            ) : !!userLastGames?.length ? (
               <Box width={'100%'}>
                 <Text bold fontSize="lg">
-                  My last game
+                  My last games
                 </Text>
-                <UserGame
-                  game={userLastGame}
-                  navigateToGameState={navigateToGameState}
-                />
+                {userLastGames?.map((game) => (
+                  <UserGame
+                    game={game}
+                    navigateToGameState={navigateToGameState}
+                    key={game.id}
+                  />
+                ))}
+                <Stack
+                  mb="2.5"
+                  mt="1.5"
+                  direction={{
+                    base: 'column',
+                    md: 'row',
+                  }}
+                  space={2}
+                  mx={{
+                    base: 'auto',
+                    md: '0',
+                  }}
+                >
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onPress={() => navigateToGameSelector()}
+                  >
+                    SEE ALL GAMES
+                  </Button>
+                </Stack>
+              </Box>
+            ) : (
+              <Box
+                background="red.700"
+                shadow={1}
+                p={6}
+                width={'100%'}
+                bg={{
+                  linearGradient: {
+                    colors: ['red.400', 'red.100'],
+                    start: [0, 0],
+                    end: [1, 0],
+                  },
+                }}
+                rounded="lg"
+              >
+                <Text bold color="white">
+                  You don't have any games yet
+                </Text>
               </Box>
             )}
           </HStack>

@@ -9,24 +9,34 @@ interface UserGameProps {
   game: Game | undefined;
 }
 
-const GRADIENT_COLORS: string[][] = [];
-GRADIENT_COLORS[0] = ['orange.400', 'amber.400'];
-GRADIENT_COLORS[1] = ['emerald.400', 'lime.300'];
-GRADIENT_COLORS[2] = ['error.600', 'danger.200'];
+const GRADIENT_COLORS: any = [];
+GRADIENT_COLORS[0] = {
+  background: ['orange.400', 'amber.400'],
+  foreground: 'black',
+};
+GRADIENT_COLORS[1] = {
+  background: ['emerald.400', 'lime.400'],
+  foreground: 'black',
+};
+GRADIENT_COLORS[2] = {
+  background: ['error.600', 'danger.300'],
+  foreground: 'black',
+};
 
 export const UserGame = ({ game, navigateToGameState }: UserGameProps) => {
   const getGradientColor = (bool: boolean) => {
     if (bool) {
       return GRADIENT_COLORS[1];
     }
-    return GRADIENT_COLORS[1];
+    return GRADIENT_COLORS[0];
   };
 
+  const colors = getGradientColor(!!game?.hasWinner);
   return (
     <Box
       bg={{
         linearGradient: {
-          colors: getGradientColor(!!game?.hasWinner),
+          colors: colors.background,
           start: [0, 0],
           end: [1, 0],
         },
@@ -40,12 +50,16 @@ export const UserGame = ({ game, navigateToGameState }: UserGameProps) => {
       <Pressable onPress={() => navigateToGameState(game?.id)}>
         <HStack space={3}>
           <Board board={game?.board} preview={true} />
-          <VStack alignItems="space-between" justifyContent="space-between">
-            <Text color="white" bold>
+          <VStack justifyContent="space-between">
+            <Text color={colors.foreground} bold>
               Game #{game?.id}
             </Text>
-            <Text color="light.50">Versus Player #Other</Text>
-            <Text fontSize="xs" color="light.100" alignSelf="flex-start">
+            <Text color={colors.foreground}>Versus Player #Other</Text>
+            <Text
+              fontSize="xs"
+              color={colors.foreground}
+              alignSelf="flex-start"
+            >
               Game.timeStamp
             </Text>
           </VStack>

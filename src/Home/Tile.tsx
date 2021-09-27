@@ -3,7 +3,7 @@ import React from 'react';
 
 interface PropsTitle {
   bgLinearColors: string[];
-  heading: string;
+  heading: { title: string; color: string };
   body: any;
   onPress?: () => void;
 }
@@ -29,10 +29,10 @@ export function Tile({ bgLinearColors, heading, body, onPress }: PropsTitle) {
             top={2}
             left={2}
             style={{ textTransform: 'uppercase' }}
-            color={'white'}
+            color={heading.color}
             mx={2}
           >
-            {heading}
+            {heading.title}
           </Heading>
           {body}
         </Center>
