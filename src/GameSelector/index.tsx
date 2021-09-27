@@ -2,6 +2,7 @@ import { useIsFocused } from '@react-navigation/native';
 import { View, ScrollView, Spinner, useToast } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { API_URL } from '../constants';
+import { useNavigation } from '../Hook/Navigation';
 import { Game } from '../interface';
 import { UserGamesList } from './UserGamesList';
 
@@ -14,8 +15,8 @@ export default function ({ navigation, player, setUser }: any) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [errorUserGames, setErrorUserGames] = useState<any>();
   const toast = useToast();
-
   const isFocused = useIsFocused();
+  const { navigateToGameState } = useNavigation(navigation);
 
   const getUserGames = async () => {
     try {
@@ -43,12 +44,6 @@ export default function ({ navigation, player, setUser }: any) {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const navigateToGameState = (id: number) => {
-    navigation.navigate('GameState', {
-      gameId: id,
-    });
   };
 
   useEffect(() => {

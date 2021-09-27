@@ -11,29 +11,18 @@ import {
   VStack,
 } from 'native-base';
 import { ScrollView } from 'react-native';
-import { Tile } from './tile';
-import { ModalSelection } from './ModalSelection';
+import { Tile } from './Tile';
+import { ModalGameJoin } from './ModalGameJoin';
 import { API_URL } from '../constants';
 import { Game } from '../interface';
+import { useNavigation } from '../Hook/Navigation';
 
 export function Home({ navigation, player }: any) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [showModal, setShowModal] = useState<boolean>(false);
   const toast = useToast();
-
-  const navigateToGameState = (id: number) => {
-    navigation.navigate('GameState', {
-      gameId: id,
-    });
-  };
-
-  const navigateToGameSelector = () => {
-    navigation.navigate('GameSelector');
-  };
-
-  const navigateToUserAccount = () => {
-    navigation.navigate('Account');
-  };
+  const { navigateToGameState, navigateToGameSelector } =
+    useNavigation(navigation);
 
   const joinGame = async (gameId: number) => {
     setIsLoading(true);
@@ -96,7 +85,7 @@ export function Home({ navigation, player }: any) {
   return (
     <Box bg={'white'} pt={12} flex={1}>
       <ScrollView contentContainerStyle={{ width: '100%', height: '100%' }}>
-        <ModalSelection
+        <ModalGameJoin
           showModal={showModal}
           setShowModal={setShowModal}
           joinGame={joinGame}

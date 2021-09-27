@@ -1,17 +1,17 @@
 import { FormControl, Modal, Button, Input, Text } from 'native-base';
 import React from 'react';
 
-interface ModalSelectionProps {
+interface ModalGameJoinProps {
   setShowModal: (bool: boolean) => void;
   joinGame: (id: number) => void;
   showModal: boolean;
 }
 
-export const ModalSelection = ({
+export const ModalGameJoin = ({
   showModal,
   setShowModal,
   joinGame,
-}: ModalSelectionProps) => {
+}: ModalGameJoinProps) => {
   let gameId: number;
   return (
     <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
