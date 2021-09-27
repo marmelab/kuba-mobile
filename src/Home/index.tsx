@@ -15,7 +15,7 @@ import { Tile } from './Tile';
 import { ModalGameJoin } from './ModalGameJoin';
 import { API_URL } from '../constants';
 import { Game } from '../interface';
-import { useNavigation } from '../Hook/Navigation';
+import { useNavigation } from '../navigation/useNavigation';
 
 export function Home({ navigation, player }: any) {
   const [isLoading, setIsLoading] = useState<boolean>(true);

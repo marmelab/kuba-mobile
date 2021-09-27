@@ -2,7 +2,7 @@ import { useIsFocused } from '@react-navigation/native';
 import { View, ScrollView, Spinner, useToast } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { API_URL } from '../constants';
-import { useNavigation } from '../Hook/Navigation';
+import { useNavigation } from '../navigation/useNavigation';
 import { Game } from '../interface';
 import { UserGamesList } from './UserGamesList';
 

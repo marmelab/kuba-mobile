@@ -17,7 +17,7 @@ import {
   GAME_STATE,
   HOME,
   LOGIN,
-} from './src/constants';
+} from './src/navigation/pageNames';
 
 export type RootStackParamList = {
   Home: undefined;

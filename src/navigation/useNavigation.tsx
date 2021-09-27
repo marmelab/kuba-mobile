@@ -1,4 +1,4 @@
-import { ACCOUNT, GAME_SELECTOR, GAME_STATE } from '../constants';
+import { ACCOUNT, GAME_SELECTOR, GAME_STATE } from './pageNames';
 
 export const useNavigation = (navigation: any) => {
   const navigateToGameState = (id: number) => {

@@ -21,7 +21,7 @@ import { Game, GameInitialization, User } from '../interface';
 import { Board } from './Board';
 import { Marble } from './Marble';
 import { Controls } from './Controls';
-import { useNavigation } from '../Hook/Navigation';
+import { useNavigation } from '../navigation/useNavigation';
 
 const initialState: GameInitialization = {
   players: [],
