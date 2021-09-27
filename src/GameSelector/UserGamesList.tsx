@@ -1,23 +1,11 @@
-import {
-  Box,
-  HStack,
-  View,
-  Text,
-  Button,
-  FlatList,
-  VStack,
-  Icon,
-  AddIcon,
-  Flex,
-  Badge,
-} from 'native-base';
+import { Box, View, Text, FlatList, Flex, Badge } from 'native-base';
 import React, { useState } from 'react';
 import { Pressable } from 'react-native';
-import { Board } from '../GameState/Board';
 import { Game } from '../interface';
+import { UserGame } from './UserGame';
 
 interface UserGamesListProps {
-  navigateToGameState: (id: number) => void;
+  navigateToGameState: (id: number | undefined) => void;
   userGames: Game[] | undefined;
 }
 
@@ -73,44 +61,7 @@ export const UserGamesList = ({
           <FlatList
             data={userGames}
             renderItem={({ item }) => (
-              <Box
-                bg={{
-                  linearGradient: {
-                    colors: ['orange.400', 'amber.200'],
-                    start: [0, 0],
-                    end: [1, 0],
-                  },
-                }}
-                rounded="lg"
-                shadow={1}
-                p={1}
-                mb={4}
-              >
-                <Pressable onPress={() => navigateToGameState(item.id)}>
-                  <HStack space={3}>
-                    <Board board={item?.board} preview={true} />
-                    <VStack
-                      alignItems="space-between"
-                      justifyContent="space-between"
-                    >
-                      <Text color="coolGray.800" bold>
-                        Game #{item.id}
-                      </Text>
-                      <Text color="coolGray.600">
-                        Player #{item.players[0]?.playerNumber} vs Player #
-                        {item.players[1]?.playerNumber}
-                      </Text>
-                      <Text
-                        fontSize="xs"
-                        color="coolGray.800"
-                        alignSelf="flex-start"
-                      >
-                        Game.timeStamp
-                      </Text>
-                    </VStack>
-                  </HStack>
-                </Pressable>
-              </Box>
+              <UserGame game={item} navigateToGameState={navigateToGameState} />
             )}
             keyExtractor={(item) => `${item.id}`}
           />

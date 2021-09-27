@@ -1,7 +1,7 @@
 import { ACCOUNT, GAME_SELECTOR, GAME_STATE } from './pageNames';
 
 export const useNavigation = (navigation: any) => {
-  const navigateToGameState = (id: number) => {
+  const navigateToGameState = (id: number | undefined) => {
     navigation.navigate(GAME_STATE, {
       gameId: id,
     });

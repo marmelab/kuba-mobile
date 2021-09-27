@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { FontAwesome } from '@expo/vector-icons';
+import React, { useEffect, useState } from 'react';
 import {
   AddIcon,
   Box,
@@ -7,8 +6,10 @@ import {
   Divider,
   HStack,
   SearchIcon,
+  Spinner,
   useToast,
   VStack,
+  Text,
 } from 'native-base';
 import { ScrollView } from 'react-native';
 import { Tile } from './Tile';
@@ -16,13 +17,52 @@ import { ModalGameJoin } from './ModalGameJoin';
 import { API_URL } from '../constants';
 import { Game } from '../interface';
 import { useNavigation } from '../navigation/useNavigation';
+import { useIsFocused } from '@react-navigation/native';
+import { UserGame } from '../GameSelector/UserGame';
 
 export function Home({ navigation, player }: any) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [userLastGame, setUserLastGame] = useState<Game>();
   const toast = useToast();
   const { navigateToGameState, navigateToGameSelector } =
     useNavigation(navigation);
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    getLastGame();
+  }, [isFocused]);
+
+  const getLastGame = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `${API_URL}/games?range=${encodeURI(
+          JSON.stringify([0, 1]),
+        )}&sort=${encodeURI(JSON.stringify(['id', 'DESC']))}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + player.token,
+          },
+        },
+      );
+      if (!response.ok) {
+        throw Error(response.statusText);
+      }
+      const json = (await response.json()).data[0] as Game;
+      setUserLastGame(json);
+    } catch (error) {
+      toast.show({
+        title: 'Error',
+        status: 'error',
+        description: `The last game can't be loaded`,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const joinGame = async (gameId: number) => {
     setIsLoading(true);
@@ -113,17 +153,21 @@ export function Home({ navigation, player }: any) {
               }
             />
           </HStack>
+
           <HStack space={3} justifyContent="space-between">
-            <Tile
-              bgLinearColors={['emerald.400', 'lime.200']}
-              heading="My Games"
-              onPress={() => navigateToGameSelector()}
-              body={
-                <Circle size={60} bg="emerald.400">
-                  <FontAwesome name="list-alt" size={30} color="white" />
-                </Circle>
-              }
-            />
+            {isLoading ? (
+              <Spinner size="lg" />
+            ) : (
+              <Box width={'100%'}>
+                <Text bold fontSize="lg">
+                  My last game
+                </Text>
+                <UserGame
+                  game={userLastGame}
+                  navigateToGameState={navigateToGameState}
+                />
+              </Box>
+            )}
           </HStack>
         </VStack>
       </ScrollView>
