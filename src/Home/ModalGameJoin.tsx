@@ -1,19 +1,17 @@
 import { FormControl, Modal, Button, Input, Text } from 'native-base';
 import React from 'react';
 
-interface ModalSelectionProps {
+interface ModalGameJoinProps {
   setShowModal: (bool: boolean) => void;
-  startNewGame: () => void;
   joinGame: (id: number) => void;
   showModal: boolean;
 }
 
-export const ModalSelection = ({
+export const ModalGameJoin = ({
   showModal,
   setShowModal,
-  startNewGame,
   joinGame,
-}: ModalSelectionProps) => {
+}: ModalGameJoinProps) => {
   let gameId: number;
   return (
     <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
@@ -26,17 +24,6 @@ export const ModalSelection = ({
             <Input type="number" onChangeText={(value) => (gameId = +value)} />
           </FormControl>
         </Modal.Body>
-        <Text
-          bold
-          italic
-          underline
-          onPress={() => {
-            setShowModal(false);
-            startNewGame();
-          }}
-        >
-          Want to start a new game ? (click here)
-        </Text>
         <Modal.Footer>
           <Button.Group space={2}>
             <Button

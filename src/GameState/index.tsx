@@ -21,6 +21,7 @@ import { Game, GameInitialization, User } from '../interface';
 import { Board } from './Board';
 import { Marble } from './Marble';
 import { Controls } from './Controls';
+import { useNavigation } from '../navigation/useNavigation';
 
 const initialState: GameInitialization = {
   players: [],
@@ -356,7 +357,7 @@ function GameInfo(props: any) {
       </HStack>
       <Stack p={4} space={2}>
         <Text fontSize="lg" bold color="white">
-          Player turn: #{game?.currentPlayer}
+          Player turn: #{game?.currentPlayer || game?.currentPlayerId}
         </Text>
       </Stack>
     </Box>
@@ -412,9 +413,7 @@ function GameUser(props: any) {
 }
 
 function ModalWin({ showModal, navigation }: any) {
-  const navigateToGameSelector = () => {
-    navigation.navigate('GameSelector');
-  };
+  const { navigateToGameSelector } = useNavigation(navigation);
 
   return (
     <Modal isOpen={showModal} onClose={() => (showModal = false)}>
