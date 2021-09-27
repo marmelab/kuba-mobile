@@ -136,18 +136,6 @@ export function Home({ navigation, player }: any) {
               }
             />
           </HStack>
-          <HStack space={3} justifyContent="space-between">
-            <Tile
-              bgLinearColors={['fuchsia.800', 'pink.300']}
-              onPress={() => navigateToUserAccount()}
-              heading="My profile"
-              body={
-                <Circle size={60} bg="fuchsia.800">
-                  <FontAwesome name="user-secret" size={30} color="white" />
-                </Circle>
-              }
-            />
-          </HStack>
         </VStack>
       </ScrollView>
     </Box>

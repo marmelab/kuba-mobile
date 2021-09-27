@@ -46,17 +46,29 @@ export default function App() {
         {user.isConnected ? (
           <>
             <Stack.Navigator
-              screenOptions={{
+              screenOptions={({ navigation }) => ({
                 headerTintColor: 'black',
                 headerTitleStyle: {
                   fontWeight: 'bold',
                 },
-              }}
+                headerRight: () => (
+                  <Pressable onPress={() => navigation.navigate('Account')}>
+                    <Avatar bg="green.500" mr={4} size="sm">
+                      {user?.username?.charAt(0).toUpperCase()}
+                    </Avatar>
+                  </Pressable>
+                ),
+              })}
             >
-              <Stack.Screen name="Home">
+              <Stack.Screen name="Home" options={{ title: 'Kuba' }}>
                 {(props) => <Home {...props} player={user} />}
               </Stack.Screen>
-              <Stack.Screen name="GameSelector">
+              <Stack.Screen
+                name="GameSelector"
+                options={({ navigation }) => ({
+                  title: 'My games',
+                })}
+              >
                 {(props) => (
                   <GameSelector {...props} player={user} setUser={setUser} />
                 )}
