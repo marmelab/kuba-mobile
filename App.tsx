@@ -1,7 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Avatar, Button, NativeBaseProvider } from 'native-base';
+import { Avatar, NativeBaseProvider } from 'native-base';
 import React from 'react';
 import { LoginScreen } from './src/Login';
 import GameSelector from './src/GameSelector';
@@ -12,6 +11,13 @@ import GameState from './src/GameState';
 import { User } from './src/interface';
 import { Pressable } from 'react-native';
 import { Home } from './src/Home';
+import {
+  ACCOUNT,
+  GAME_SELECTOR,
+  GAME_STATE,
+  HOME,
+  LOGIN,
+} from './src/constants';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -52,7 +58,7 @@ export default function App() {
                   fontWeight: 'bold',
                 },
                 headerRight: () => (
-                  <Pressable onPress={() => navigation.navigate('Account')}>
+                  <Pressable onPress={() => navigation.navigate(ACCOUNT)}>
                     <Avatar bg="green.500" mr={4} size="sm">
                       {user?.username?.charAt(0).toUpperCase()}
                     </Avatar>
@@ -60,11 +66,11 @@ export default function App() {
                 ),
               })}
             >
-              <Stack.Screen name="Home" options={{ title: 'Kuba' }}>
+              <Stack.Screen name={HOME} options={{ title: 'Kuba' }}>
                 {(props) => <Home {...props} player={user} />}
               </Stack.Screen>
               <Stack.Screen
-                name="GameSelector"
+                name={GAME_SELECTOR}
                 options={({ navigation }) => ({
                   title: 'My games',
                 })}
@@ -73,7 +79,7 @@ export default function App() {
                   <GameSelector {...props} player={user} setUser={setUser} />
                 )}
               </Stack.Screen>
-              <Stack.Screen name="GameState">
+              <Stack.Screen name={GAME_STATE}>
                 {(props) => <GameState {...props} player={user} />}
               </Stack.Screen>
               <Stack.Screen name="Account">
@@ -97,7 +103,7 @@ export default function App() {
               },
             }}
           >
-            <Stack.Screen name="Login">
+            <Stack.Screen name={LOGIN}>
               {(props) => <LoginScreen {...props} setUser={setUser} />}
             </Stack.Screen>
           </Stack.Navigator>

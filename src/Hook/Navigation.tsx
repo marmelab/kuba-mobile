@@ -1,16 +1,18 @@
+import { ACCOUNT, GAME_SELECTOR, GAME_STATE } from '../constants';
+
 export const useNavigation = (navigation: any) => {
   const navigateToGameState = (id: number) => {
-    navigation.navigate('GameState', {
+    navigation.navigate(GAME_STATE, {
       gameId: id,
     });
   };
 
   const navigateToGameSelector = () => {
-    navigation.navigate('GameSelector');
+    navigation.navigate(GAME_SELECTOR);
   };
 
   const navigateToUserAccount = () => {
-    navigation.navigate('Account');
+    navigation.navigate(ACCOUNT);
   };
 
   return { navigateToGameState, navigateToGameSelector, navigateToUserAccount };
