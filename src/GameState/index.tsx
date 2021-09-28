@@ -247,13 +247,14 @@ export default function GameState({ navigation, route, player }: any) {
             y: state.game.marbleClicked.y,
           };
           const playerForAPI = getPlayerObject(player);
-          const response = await moveMarble(
-            gameId,
-            coordinates,
-            playerForAPI,
-            direction,
-            player.token,
-          );
+          // const marblesToMove = getMarblesToMove(coordinates, direction);
+          // const response = await moveMarble(
+          //   gameId,
+          //   coordinates,
+          //   playerForAPI,
+          //   direction,
+          //   player.token,
+          // );
         }
       }
     } catch (error) {
@@ -264,6 +265,8 @@ export default function GameState({ navigation, route, player }: any) {
       });
     }
   }
+
+  // const getMarblesToMove = (coordinate, direction) => {};
 
   return (
     <Flex flex={1}>

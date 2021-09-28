@@ -18,6 +18,27 @@ export const Board = (props: any) => {
   const boxMarbleSize = 100 / board.length;
   const boxMarbleSizePourcent = `${boxMarbleSize}%`;
 
+  const getStyleAnimated = (item: any) => {
+    if (
+      marbleClickedCoordinates?.x === item.x &&
+      marbleClickedCoordinates?.y === item.y
+    ) {
+      return [
+        {
+          transition: 'all 0.5s ease-in-out',
+          transform: [{ translateX: 50 }],
+        },
+      ];
+    }
+
+    return [
+      {
+        transition: 'all 0.5s ease-in-out',
+        transform: [{ translateX: 0 }],
+      },
+    ];
+  };
+
   return (
     <ImageBackground
       source={require('./board.png')}
@@ -44,6 +65,7 @@ export const Board = (props: any) => {
               ? BOARD_GREEN
               : ''
           }
+          style={getStyleAnimated(item)}
         >
           {item.value != 0 && (
             <Marble
