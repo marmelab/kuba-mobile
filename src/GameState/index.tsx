@@ -247,7 +247,7 @@ export default function GameState({ navigation, route, player }: any) {
             y: state.game.marbleClicked.y,
           };
           const playerForAPI = getPlayerObject(player);
-          // const marblesToMove = getMarblesToMove(coordinates, direction);
+          const marblesToMove = getMarblesToMove(coordinates, direction);
           // const response = await moveMarble(
           //   gameId,
           //   coordinates,
@@ -266,7 +266,51 @@ export default function GameState({ navigation, route, player }: any) {
     }
   }
 
-  // const getMarblesToMove = (coordinate, direction) => {};
+  const getMarblesToMove = (marbleCoordinate: any, direction: string) => {
+    console.log(marbleCoordinate);
+    console.log(state?.game);
+    if (!marbleCoordinate || !state?.game?.graph || !direction) {
+      return [];
+    }
+    console.log(marbleCoordinate);
+    console.log(direction);
+    // let currentNode =
+    //   graph.nodes[`${marbleCoordinate.x},${marbleCoordinate.y}`];
+
+    // if (currentNode.value === 0) {
+    //   return graph;
+    // }
+
+    // const nodes = [currentNode];
+    // while (true) {
+    //   const edge = graph.edges.find((edge) => {
+    //     return (
+    //       edge.direction === direction &&
+    //       edge.from === `${currentNode.x},${currentNode.y}`
+    //     );
+    //   });
+
+    //   if (!edge || !graph.nodes[edge.to]) {
+    //     break;
+    //   }
+
+    //   currentNode = graph.nodes[edge.to];
+    //   nodes.push(currentNode);
+
+    //   if (currentNode.value == 0) {
+    //     break;
+    //   }
+    // }
+
+    // let previousValue = 0;
+    // nodes.map((node) => {
+    //   const tmpValue = node.value;
+    //   node.value = previousValue;
+    //   previousValue = tmpValue;
+    // });
+
+    // return graph;
+  };
 
   return (
     <Flex flex={1}>
