@@ -1,5 +1,6 @@
 import { Stack, HStack, Box } from 'native-base';
 import React from 'react';
+import { BOARD_GREEN, BOARD_GREY } from './boardColors';
 import { Marble } from './Marble';
 
 export const Board = (props: any) => {
@@ -8,12 +9,11 @@ export const Board = (props: any) => {
   const marbleColorSize = props.preview ? 4 : 12;
   const marbleEmptySize = props.preview ? 2 : 4;
 
-
-  const [marbleClickedCoordinates, setMarbleClickedCoordinates] = React.useState<{ x: number, y: number } | null>(null)
-
+  const [marbleClickedCoordinates, setMarbleClickedCoordinates] =
+    React.useState<{ x: number; y: number } | null>(null);
 
   return (
-    <Stack mb={4}>
+    <Stack rounded={'lg'}>
       {board.map((row: [], rowIndex: number) => (
         <HStack alignItems="center" key={rowIndex}>
           {row.map((cell, cellIndex) => (
@@ -22,7 +22,12 @@ export const Board = (props: any) => {
               alignItems="center"
               justifyContent="center"
               key={cellIndex}
-              bg={marbleClickedCoordinates?.x === cellIndex && marbleClickedCoordinates?.y === rowIndex ? '#0bf220' : "#948e8b"}
+              bg={
+                marbleClickedCoordinates?.x === cellIndex &&
+                marbleClickedCoordinates?.y === rowIndex
+                  ? BOARD_GREY
+                  : BOARD_GREEN
+              }
               m={0}
               p={0}
             >

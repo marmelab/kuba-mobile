@@ -1,21 +1,17 @@
-import {
-  Heading,
-  Box,
-  HStack,
-  Flex,
-  CheckIcon,
-  SmallCloseIcon,
-  Stack,
-  View,
-  Text,
-  Button,
-} from 'native-base';
-import React from 'react';
-import { Board } from '../GameState/Board';
+import { Box, View, Text, FlatList, Flex, Badge } from 'native-base';
+import React, { useState } from 'react';
+import { Pressable } from 'react-native';
 import { Game } from '../interface';
+import {
+  filterGamesByGameState,
+  GAME_STATE_IN_PROGRESS,
+  FilterGameState,
+  GAME_STATE_FINISHED,
+} from './filterGames';
+import { UserGame } from './UserGame';
 
 interface UserGamesListProps {
-  navigateToGameState: (id: number) => void;
+  navigateToGameState: (id: number | undefined) => void;
   userGames: Game[] | undefined;
 }
 
@@ -23,12 +19,49 @@ export const UserGamesList = ({
   userGames,
   navigateToGameState,
 }: UserGamesListProps) => {
+  const [filter, setFilter] = useState<FilterGameState>(GAME_STATE_IN_PROGRESS);
+  const userGamesFiltered = filterGamesByGameState(userGames, filter);
+
   return (
     <View>
-      <Heading size="lg" color="primary.500" mt={4} mb={4}>
-        User games
-      </Heading>
-      {!userGames?.length && (
+      <Flex direction="row" mb={4}>
+        <Pressable onPress={() => setFilter('all')}>
+          <Badge
+            p="2"
+            mr={3}
+            rounded="lg"
+            colorScheme={filter === 'all' ? 'primary' : 'coolGray'}
+          >
+            All
+          </Badge>
+        </Pressable>
+
+        <Pressable onPress={() => setFilter(GAME_STATE_IN_PROGRESS)}>
+          <Badge
+            p="2"
+            mr={3}
+            rounded="lg"
+            colorScheme={
+              filter === GAME_STATE_IN_PROGRESS ? 'primary' : 'coolGray'
+            }
+          >
+            In progress
+          </Badge>
+        </Pressable>
+
+        <Pressable onPress={() => setFilter(GAME_STATE_FINISHED)}>
+          <Badge
+            p="2"
+            rounded="lg"
+            colorScheme={
+              filter === GAME_STATE_FINISHED ? 'primary' : 'coolGray'
+            }
+          >
+            Finished
+          </Badge>
+        </Pressable>
+      </Flex>
+      {!userGamesFiltered?.length && (
         <Box
           background="red.700"
           shadow={1}
@@ -48,72 +81,17 @@ export const UserGamesList = ({
         </Box>
       )}
 
-      {userGames &&
-        userGames?.map((game) => (
-          <Box
-            shadow={3}
-            mb={4}
-            width="100%"
-            rounded="lg"
-            key={game.id}
-            bg="white"
-          >
-            <HStack
-              alignItems="center"
-              justifyContent="center"
-              bg={{
-                linearGradient: {
-                  colors: ['cyan.400', 'cyan.100'],
-                  start: [0, 0],
-                  end: [1, 0],
-                },
-              }}
-              rounded="lg"
-            >
-              <Board board={game?.board} preview={true} />
-            </HStack>
-            <HStack
-              alignItems="center"
-              justifyContent="space-between"
-              p={4}
-              space={2}
-            >
-              <Text fontSize="lg" bold color="black">
-                Game #{game?.id}
-              </Text>
-              <Flex alignItems="center" direction="row">
-                <Text fontSize="lg" bold color="black" pr={2}>
-                  Has Winner:
-                </Text>
-                {game?.hasWinner ? (
-                  <CheckIcon color="green.600" />
-                ) : (
-                  <SmallCloseIcon color="red.600" />
-                )}
-              </Flex>
-            </HStack>
-            <Stack p={4} space={2}>
-              {game?.players?.map((player) => (
-                <Text
-                  fontSize="md"
-                  bold
-                  color="black"
-                  key={player?.playerNumber}
-                >
-                  Player #{player?.playerNumber}
-                </Text>
-              ))}
-            </Stack>
-            <Stack>
-              <Button
-                onPress={() => navigateToGameState(game.id)}
-                colorScheme="cyan"
-              >
-                Go !
-              </Button>
-            </Stack>
-          </Box>
-        ))}
+      {userGamesFiltered && (
+        <View>
+          <FlatList
+            data={userGamesFiltered}
+            renderItem={({ item }) => (
+              <UserGame game={item} navigateToGameState={navigateToGameState} />
+            )}
+            keyExtractor={(item) => `${item.id}`}
+          />
+        </View>
+      )}
     </View>
   );
 };
