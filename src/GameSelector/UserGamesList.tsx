@@ -3,9 +3,10 @@ import React, { useState } from 'react';
 import { Pressable } from 'react-native';
 import { Game } from '../interface';
 import {
-  FilterGames,
-  GAME_STATE_FINISHED,
+  filterGamesByGameState,
   GAME_STATE_IN_PROGRESS,
+  FilterGameState,
+  GAME_STATE_FINISHED,
 } from './filterGames';
 import { UserGame } from './UserGame';
 
@@ -18,24 +19,8 @@ export const UserGamesList = ({
   userGames,
   navigateToGameState,
 }: UserGamesListProps) => {
-  const [filter, setFilter] = useState<FilterGames>(GAME_STATE_IN_PROGRESS);
-
-  const filterGames = (gameState: FilterGames) => {
-    switch (gameState) {
-      case GAME_STATE_IN_PROGRESS: {
-        return userGames?.filter((game) => !game.hasWinner);
-      }
-
-      case GAME_STATE_FINISHED: {
-        return (userGames = userGames?.filter((game) => !!game.hasWinner));
-      }
-
-      default:
-        return userGames;
-    }
-  };
-
-  userGames = filterGames(filter);
+  const [filter, setFilter] = useState<FilterGameState>(GAME_STATE_IN_PROGRESS);
+  const userGamesFiltered = filterGamesByGameState(userGames, filter);
 
   return (
     <View>
@@ -51,28 +36,32 @@ export const UserGamesList = ({
           </Badge>
         </Pressable>
 
-        <Pressable onPress={() => setFilter('inProgress')}>
+        <Pressable onPress={() => setFilter(GAME_STATE_IN_PROGRESS)}>
           <Badge
             p="2"
             mr={3}
             rounded="lg"
-            colorScheme={filter === 'inProgress' ? 'primary' : 'coolGray'}
+            colorScheme={
+              filter === GAME_STATE_IN_PROGRESS ? 'primary' : 'coolGray'
+            }
           >
             In progress
           </Badge>
         </Pressable>
 
-        <Pressable onPress={() => setFilter('finished')}>
+        <Pressable onPress={() => setFilter(GAME_STATE_FINISHED)}>
           <Badge
             p="2"
             rounded="lg"
-            colorScheme={filter === 'finished' ? 'primary' : 'coolGray'}
+            colorScheme={
+              filter === GAME_STATE_FINISHED ? 'primary' : 'coolGray'
+            }
           >
             Finished
           </Badge>
         </Pressable>
       </Flex>
-      {!userGames?.length && (
+      {!userGamesFiltered?.length && (
         <Box
           background="red.700"
           shadow={1}
@@ -92,10 +81,10 @@ export const UserGamesList = ({
         </Box>
       )}
 
-      {userGames && (
+      {userGamesFiltered && (
         <View>
           <FlatList
-            data={userGames}
+            data={userGamesFiltered}
             renderItem={({ item }) => (
               <UserGame game={item} navigateToGameState={navigateToGameState} />
             )}
