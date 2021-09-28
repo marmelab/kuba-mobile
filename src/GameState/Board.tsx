@@ -1,6 +1,7 @@
-import { Stack, HStack, Box, Text, View } from 'native-base';
+import { Box, View } from 'native-base';
 import React from 'react';
-import { BOARD_GREEN, BOARD_GREY } from './boardColors';
+import { BOARD_GREEN } from './boardColors';
+import { convertBoardToBoardCoordinate } from './convertBoardToBoardCoordinate';
 import { Marble } from './Marble';
 
 export const Board = (props: any) => {
@@ -12,21 +13,7 @@ export const Board = (props: any) => {
   const [marbleClickedCoordinates, setMarbleClickedCoordinates] =
     React.useState<{ x: number; y: number } | null>(null);
 
-  const convertBoardToPosition = () => {
-    let result: { x: number; y: number; value: number }[] = [];
-
-    board.map((row: [], index: number) => {
-      const y = index;
-      row.map((col: any, index: number) => {
-        const x = index;
-        const value = col;
-        result.push({ x, y, value });
-      });
-    });
-
-    return result;
-  };
-  const boardCoordinate = convertBoardToPosition();
+  const boardCoordinate = convertBoardToBoardCoordinate(board);
   const boxMarbleSize = 100 / board.length;
   const boxMarbleSizePourcent = `${boxMarbleSize}%`;
 
@@ -50,8 +37,8 @@ export const Board = (props: any) => {
           bg={
             marbleClickedCoordinates?.x === item.x &&
             marbleClickedCoordinates?.y === item.y
-              ? '#0bf220'
-              : '#948e8b'
+              ? BOARD_GREEN
+              : ''
           }
         >
           <Marble
