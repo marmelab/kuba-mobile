@@ -1,5 +1,6 @@
 import { Stack, HStack, Box } from 'native-base';
 import React from 'react';
+import { BOARD_GREEN, BOARD_GREY } from './boardColors';
 import { Marble } from './Marble';
 
 export const Board = (props: any) => {
@@ -24,8 +25,8 @@ export const Board = (props: any) => {
               bg={
                 marbleClickedCoordinates?.x === cellIndex &&
                 marbleClickedCoordinates?.y === rowIndex
-                  ? '#0bf220'
-                  : '#948e8b'
+                  ? BOARD_GREY
+                  : BOARD_GREEN
               }
               m={0}
               p={0}

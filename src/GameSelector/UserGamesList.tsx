@@ -2,6 +2,11 @@ import { Box, View, Text, FlatList, Flex, Badge } from 'native-base';
 import React, { useState } from 'react';
 import { Pressable } from 'react-native';
 import { Game } from '../interface';
+import {
+  FilterGames,
+  GAME_STATE_FINISHED,
+  GAME_STATE_IN_PROGRESS,
+} from './filterGames';
 import { UserGame } from './UserGame';
 
 interface UserGamesListProps {
@@ -13,17 +18,15 @@ export const UserGamesList = ({
   userGames,
   navigateToGameState,
 }: UserGamesListProps) => {
-  const [filter, setFilter] = useState<'all' | 'inProgress' | 'finished'>(
-    'inProgress',
-  );
+  const [filter, setFilter] = useState<FilterGames>(GAME_STATE_IN_PROGRESS);
 
-  const filterGames = (filter: string) => {
-    switch (filter) {
-      case 'inProgress': {
+  const filterGames = (gameState: FilterGames) => {
+    switch (gameState) {
+      case GAME_STATE_IN_PROGRESS: {
         return userGames?.filter((game) => !game.hasWinner);
       }
 
-      case 'finished': {
+      case GAME_STATE_FINISHED: {
         return (userGames = userGames?.filter((game) => !!game.hasWinner));
       }
 
