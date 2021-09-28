@@ -14,7 +14,7 @@ export const UserGamesList = ({
   navigateToGameState,
 }: UserGamesListProps) => {
   const [filter, setFilter] = useState<'all' | 'inProgress' | 'finished'>(
-    'all',
+    'inProgress',
   );
 
   const filterGames = (filter: string) => {
