@@ -1,7 +1,7 @@
 export interface Game {
   id: number;
   board: JSON | null;
-  graph?: JSON | null;
+  graph?: Graph | null;
   currentPlayer: number | null;
   players: Player[] | null;
   directionSelected: string | null;
@@ -40,4 +40,19 @@ export interface Node {
   y: number;
   value: number;
   isExit: Boolean;
-};
+}
+
+export interface Edge {
+  from: string;
+  to: string;
+  direction: Direction;
+}
+
+export interface Graph {
+  nodes: {
+    [coordinates: string]: Node;
+  };
+  edges: Array<Edge>;
+}
+
+export type Direction = 'N' | 'S' | 'E' | 'W';

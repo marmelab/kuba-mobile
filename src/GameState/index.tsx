@@ -267,40 +267,34 @@ export default function GameState({ navigation, route, player }: any) {
   }
 
   const getMarblesToMove = (marbleCoordinate: any, direction: string) => {
-    console.log(marbleCoordinate);
-    console.log(state?.game);
     if (!marbleCoordinate || !state?.game?.graph || !direction) {
       return [];
     }
-    console.log(marbleCoordinate);
-    console.log(direction);
-    // let currentNode =
-    //   graph.nodes[`${marbleCoordinate.x},${marbleCoordinate.y}`];
+    const graph = state.game.graph;
+    let currentNode =
+      graph.nodes[`${marbleCoordinate.x},${marbleCoordinate.y}`];
 
-    // if (currentNode.value === 0) {
-    //   return graph;
-    // }
+    const nodes = [currentNode];
+    while (true) {
+      const edge = graph.edges.find((edge) => {
+        return (
+          edge.direction === direction &&
+          edge.from === `${currentNode.x},${currentNode.y}`
+        );
+      });
 
-    // const nodes = [currentNode];
-    // while (true) {
-    //   const edge = graph.edges.find((edge) => {
-    //     return (
-    //       edge.direction === direction &&
-    //       edge.from === `${currentNode.x},${currentNode.y}`
-    //     );
-    //   });
+      if (!edge || !graph.nodes[edge.to]) {
+        break;
+      }
 
-    //   if (!edge || !graph.nodes[edge.to]) {
-    //     break;
-    //   }
+      currentNode = graph.nodes[edge.to];
+      if (currentNode.value == 0) {
+        break;
+      }
+      nodes.push(currentNode);
+    }
 
-    //   currentNode = graph.nodes[edge.to];
-    //   nodes.push(currentNode);
-
-    //   if (currentNode.value == 0) {
-    //     break;
-    //   }
-    // }
+    console.log(nodes);
 
     // let previousValue = 0;
     // nodes.map((node) => {
