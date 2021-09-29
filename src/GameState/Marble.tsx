@@ -1,6 +1,6 @@
 import { Circle } from 'native-base';
 import React from 'react';
-import { Animated, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+import { Animated, StyleProp, StyleSheet, ViewStyle } from 'react-native';
 
 import {
   PanGestureHandler,
@@ -8,7 +8,6 @@ import {
   PanGestureHandlerStateChangeEvent,
   PanGestureHandlerGestureEvent,
   GestureEvent,
-  PanGestureHandlerEventPayload,
 } from 'react-native-gesture-handler';
 
 const MARBLE_COLOR_RADIAL = ['warmGray.300', 'black', 'white', 'red.700'];
@@ -62,7 +61,6 @@ export const Marble = (props: MarbleProps) => {
   );
 
   const onHandlerStateChange = (event: PanGestureHandlerStateChangeEvent) => {
-    console.log('onHandlerStateChanged');
     if (event.nativeEvent.oldState === State.ACTIVE) {
       if (isXDisabled) {
         translateX.setOffset(oldCoords.x);
@@ -112,12 +110,10 @@ export const Marble = (props: MarbleProps) => {
         Math.abs(getYdiff(event.nativeEvent.absoluteY)) >
         Math.abs(getXdiff(event.nativeEvent.absoluteX))
       ) {
-        console.log(`disabling x`);
         if (!isYDisabled) {
           setIsXDisabled(true);
         }
       } else {
-        console.log(`disabling y`);
         if (!isXDisabled) {
           setIsYDisabled(true);
         }
