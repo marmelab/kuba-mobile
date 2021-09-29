@@ -6,9 +6,9 @@ import { Marble } from './Marble';
 
 export const Board = (props: any) => {
   const board = props.board;
-  const boardSize = props.preview ? 32 : '360px';
-  const marbleColorSize = props.preview ? 4 : 12;
-  const marbleEmptySize = props.preview ? 2 : 4;
+  const boardSize = props.preview ? '128px' : '360px';
+  const marbleColorSize = props.preview ? '16px' : '48px';
+  const marbleEmptySize = props.preview ? '8px' : '16px';
 
   const [marbleClickedCoordinates, setMarbleClickedCoordinates] =
     React.useState<{ x: number; y: number } | null>(null);
