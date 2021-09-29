@@ -7,7 +7,6 @@ import {
   State,
   PanGestureHandlerStateChangeEvent,
   PanGestureHandlerGestureEvent,
-  GestureEvent,
 } from 'react-native-gesture-handler';
 
 const MARBLE_COLOR_RADIAL = ['warmGray.300', 'black', 'white', 'red.700'];
@@ -46,6 +45,7 @@ export const Marble = (props: MarbleProps) => {
   const translateY = new Animated.Value(0);
   const lastOffset = { x: 0, y: 0 };
   const oldCoords = { x: 0, y: 0 };
+
   let onGestureEvent: (event: PanGestureHandlerGestureEvent) => void;
 
   onGestureEvent = Animated.event(
@@ -57,7 +57,10 @@ export const Marble = (props: MarbleProps) => {
         },
       },
     ],
-    { useNativeDriver: true },
+    {
+      useNativeDriver: true,
+      listener: (event) => onGestureEventHanlder(event),
+    },
   );
 
   const onHandlerStateChange = (event: PanGestureHandlerStateChangeEvent) => {
@@ -104,8 +107,8 @@ export const Marble = (props: MarbleProps) => {
     return newXvalue - oldCoords.x;
   };
 
-  const onGestureEventHanlder = (event: GestureEvent<any>) => {
-    if (event.nativeEvent.oldState === State.BEGAN) {
+  const onGestureEventHanlder = (event: any) => {
+    if (event.nativeEvent.state === State.ACTIVE) {
       if (
         Math.abs(getYdiff(event.nativeEvent.absoluteY)) >
         Math.abs(getXdiff(event.nativeEvent.absoluteX))
@@ -119,8 +122,6 @@ export const Marble = (props: MarbleProps) => {
         }
       }
     }
-
-    onGestureEvent(event);
   };
 
   const styles = StyleSheet.create({
@@ -137,7 +138,7 @@ export const Marble = (props: MarbleProps) => {
   return (
     <PanGestureHandler
       {...props}
-      onGestureEvent={onGestureEventHanlder}
+      onGestureEvent={onGestureEvent}
       onHandlerStateChange={onHandlerStateChange}
       minDist={10}
     >
