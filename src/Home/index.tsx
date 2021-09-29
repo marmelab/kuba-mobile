@@ -43,7 +43,7 @@ export function Home({ navigation, player }: any) {
         `${API_URL}/games?range=${encodeURI(
           JSON.stringify([0, 2]),
         )}&sort=${encodeURI(JSON.stringify(['id', 'DESC']))}&filter=${encodeURI(
-          JSON.stringify({ playerNumber: [player.id] }),
+          JSON.stringify({ playerId: [player.id] }),
         )}`,
         {
           method: 'GET',
