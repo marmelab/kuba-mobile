@@ -15,7 +15,7 @@ import {
   View,
   Button,
 } from 'native-base';
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { API_URL, GATEWAY_URL } from '../constants';
 import { Game, GameInitialization, User } from '../interface';
 import { Board } from './Board';
@@ -124,6 +124,18 @@ export default function GameState({ navigation, route, player }: any) {
             });
             break;
 
+          case 'animatedMarble':
+            if (messageParsed.event.data.playerId != player.id) {
+              dispatch({
+                type: 'animatedMarble',
+                value: {
+                  marblesCoordinate: messageParsed.event.data.marblesCoordinate,
+                  direction: messageParsed.event.data.direction,
+                },
+              });
+            }
+            break;
+
           case 'restart':
             toast.show({
               title: 'Restart',
@@ -156,11 +168,14 @@ export default function GameState({ navigation, route, player }: any) {
             break;
 
           case 'error':
-            toast.show({
-              title: 'Error',
-              status: 'error',
-              description: messageParsed.event.message,
-            });
+            if (state.game?.currentPlayer === player.id) {
+              toast.show({
+                title: 'Error',
+                status: 'error',
+                description: messageParsed.event.message,
+              });
+            }
+
             break;
 
           default:
@@ -265,7 +280,7 @@ export default function GameState({ navigation, route, player }: any) {
           });
 
           setTimeout(async () => {
-            const response = await moveMarble(
+            await moveMarble(
               gameId,
               coordinates,
               playerForAPI,
@@ -434,9 +449,15 @@ function GameUser(props: any) {
 
 function ModalWin({ showModal, navigation }: any) {
   const { navigateToGameSelector } = useNavigation(navigation);
+  const [isOpen, setIsOpen] = useState<boolean>(showModal);
+
+  const handleNavigateButton = () => {
+    navigateToGameSelector();
+    setIsOpen(false);
+  };
 
   return (
-    <Modal isOpen={showModal} onClose={() => (showModal = false)}>
+    <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
       <Modal.Content maxWidth="400px">
         <Modal.CloseButton />
         <Modal.Header>The game is over</Modal.Header>
@@ -444,7 +465,7 @@ function ModalWin({ showModal, navigation }: any) {
           <Button
             variant="ghost"
             colorScheme="blueGray"
-            onPress={() => navigateToGameSelector()}
+            onPress={() => handleNavigateButton()}
           >
             Go to your games
           </Button>

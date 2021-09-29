@@ -4,7 +4,10 @@ import { ImageBackground } from 'react-native';
 import { BOARD_GREEN } from './boardColors';
 import { convertBoardToBoardCoordinate } from './convertBoardToBoardCoordinate';
 import { Marble } from './Marble';
+import { BOARD_SIZE, MARBLE_SIZE } from './sizes';
 import { TranslateView } from './TranslateView';
+
+const BOARD_PNG = require('./board.png');
 
 const marbleIsAnimated = (
   marbleCoordinate: any,
@@ -22,9 +25,10 @@ const marbleIsAnimated = (
 
 export const Board = (props: any) => {
   const board = props.board;
-  const boardSize = props.preview ? '128px' : '364px';
-  const marbleColorSize = props.preview ? '16px' : '48px';
-  const marbleEmptySize = props.preview ? '8px' : '16px';
+  const boardSize = props.preview ? BOARD_SIZE.preview : BOARD_SIZE.full;
+  const marbleColorSize = props.preview
+    ? MARBLE_SIZE.preview
+    : MARBLE_SIZE.full;
   const animatedMarble = props.animatedMarble;
 
   const [marbleClickedCoordinates, setMarbleClickedCoordinates] =
@@ -34,51 +38,56 @@ export const Board = (props: any) => {
   const boxMarbleSize = 100 / board.length;
   const boxMarbleSizePourcent = `${boxMarbleSize}%`;
   return (
-    <ImageBackground
-      source={require('./board.png')}
-      resizeMode="cover"
-      style={{
-        position: 'relative',
-        width: boardSize,
-        height: boardSize,
-      }}
-    >
-      {boardCoordinate.map((item) => (
-        <TranslateView
-          activated={marbleIsAnimated(item, animatedMarble?.marblesCoordinate)}
-          direction={animatedMarble?.direction}
-          style={{
-            position: 'absolute',
-            left: `${item.x * boxMarbleSize}%`,
-            top: `${item.y * boxMarbleSize}%`,
-            width: boxMarbleSizePourcent,
-            height: boxMarbleSizePourcent,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          key={item.x + ',' + item.y}
-        >
-          <Box
-            bg={
-              marbleClickedCoordinates?.x === item.x &&
-              marbleClickedCoordinates?.y === item.y
-                ? BOARD_GREEN
-                : ''
-            }
-          >
-            {item.value != 0 && (
-              <Marble
-                value={item.value}
-                size={item.value === 0 ? marbleEmptySize : marbleColorSize}
-                rowIndex={item.y}
-                cellIndex={item.x}
-                setMarbleClickedCoordinates={setMarbleClickedCoordinates}
-                setMarbleClicked={props.setMarbleClicked}
-              />
+    <View width={boardSize} height={boardSize}>
+      <ImageBackground
+        source={BOARD_PNG}
+        resizeMode="cover"
+        style={{
+          position: 'relative',
+          width: '100%',
+          height: '100%',
+        }}
+      >
+        {boardCoordinate.map((item) => (
+          <TranslateView
+            activated={marbleIsAnimated(
+              item,
+              animatedMarble?.marblesCoordinate,
             )}
-          </Box>
-        </TranslateView>
-      ))}
-    </ImageBackground>
+            direction={animatedMarble?.direction}
+            style={{
+              position: 'absolute',
+              left: `${item.x * boxMarbleSize}%`,
+              top: `${item.y * boxMarbleSize}%`,
+              width: boxMarbleSizePourcent,
+              height: boxMarbleSizePourcent,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            key={item.x + ',' + item.y}
+          >
+            <Box
+              bg={
+                marbleClickedCoordinates?.x === item.x &&
+                marbleClickedCoordinates?.y === item.y
+                  ? BOARD_GREEN
+                  : ''
+              }
+            >
+              {item.value != 0 && (
+                <Marble
+                  value={item.value}
+                  size={marbleColorSize}
+                  rowIndex={item.y}
+                  cellIndex={item.x}
+                  setMarbleClickedCoordinates={setMarbleClickedCoordinates}
+                  setMarbleClicked={props.setMarbleClicked}
+                />
+              )}
+            </Box>
+          </TranslateView>
+        ))}
+      </ImageBackground>
+    </View>
   );
 };
