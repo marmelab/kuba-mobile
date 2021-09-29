@@ -15,7 +15,7 @@ import {
   View,
   Button,
 } from 'native-base';
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { API_URL, GATEWAY_URL } from '../constants';
 import { Game, GameInitialization, User } from '../interface';
 import { Board } from './Board';
@@ -30,6 +30,7 @@ const initialState: GameInitialization = {
   isLoading: true,
   error: undefined,
   animatedMarble: undefined,
+  moveMarbleReference: undefined,
 };
 
 const reducer = (
@@ -44,6 +45,28 @@ export default function GameState({ navigation, route, player }: any) {
   const gameId = route.params?.gameId;
   const toast = useToast();
   let WS: any = undefined;
+
+  useEffect(() => {
+    getGame();
+    initWebSocket();
+    return () => {
+      if (WS) WS.close();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!!state.animatedMarble && !!state.moveMarbleReference) {
+      moveMarble(
+        state.moveMarbleReference.gameId,
+        state.moveMarbleReference.coordinates,
+        state.moveMarbleReference.playerForAPI,
+        state.moveMarbleReference.direction,
+        state.moveMarbleReference.token,
+      );
+
+      dispatch({ type: 'moveMarbleReference', value: undefined });
+    }
+  }, [state.animatedMarble]);
 
   const getGame = async () => {
     try {
@@ -218,14 +241,6 @@ export default function GameState({ navigation, route, player }: any) {
     };
   };
 
-  useEffect(() => {
-    getGame();
-    initWebSocket();
-    return () => {
-      if (WS) WS.close();
-    };
-  }, []);
-
   const setMarbleClicked = async (marbleClicked: {
     x: number;
     y: number;
@@ -272,22 +287,23 @@ export default function GameState({ navigation, route, player }: any) {
           );
 
           dispatch({
+            type: 'moveMarbleReference',
+            value: {
+              gameId,
+              coordinates,
+              playerForAPI,
+              direction,
+              token: player.token,
+            },
+          });
+
+          dispatch({
             type: 'animatedMarble',
             value: {
               marblesCoordinate: marblesCoordinateToAnimate,
               direction,
             },
           });
-
-          setTimeout(async () => {
-            await moveMarble(
-              gameId,
-              coordinates,
-              playerForAPI,
-              direction,
-              player.token,
-            );
-          }, 1000);
         }
       }
     } catch (error) {

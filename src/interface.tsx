@@ -34,6 +34,7 @@ export interface GameInitialization {
   isLoading: boolean;
   error: any | undefined;
   animatedMarble: { marblesCoordinate: Node[]; direcition: string } | undefined;
+  moveMarbleReference: any | undefined;
 }
 
 export interface Node {
