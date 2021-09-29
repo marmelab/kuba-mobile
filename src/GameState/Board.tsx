@@ -25,7 +25,7 @@ export const Board = (props: any) => {
   const boardSize = props.preview ? '128px' : '364px';
   const marbleColorSize = props.preview ? '16px' : '48px';
   const marbleEmptySize = props.preview ? '8px' : '16px';
-  const marblesCoordinateToAnimate = props.marblesCoordinateToAnimate;
+  const animatedMarble = props.animatedMarble;
 
   const [marbleClickedCoordinates, setMarbleClickedCoordinates] =
     React.useState<{ x: number; y: number } | null>(null);
@@ -45,7 +45,8 @@ export const Board = (props: any) => {
     >
       {boardCoordinate.map((item) => (
         <TranslateView
-          activated={marbleIsAnimated(item, marblesCoordinateToAnimate)}
+          activated={marbleIsAnimated(item, animatedMarble?.marblesCoordinate)}
+          direction={animatedMarble?.direction}
           style={{
             position: 'absolute',
             left: `${item.x * boxMarbleSize}%`,

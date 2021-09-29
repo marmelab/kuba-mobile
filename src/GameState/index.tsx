@@ -29,7 +29,7 @@ const initialState: GameInitialization = {
   game: undefined,
   isLoading: true,
   error: undefined,
-  marblesCoordinateToAnimate: undefined,
+  animatedMarble: undefined,
 };
 
 const reducer = (
@@ -106,6 +106,7 @@ export default function GameState({ navigation, route, player }: any) {
       const messageParsed = JSON.parse(message.data);
 
       if (messageParsed.gameState) {
+        dispatch({ type: 'animatedMarble', value: undefined });
         dispatch({ type: 'game', value: messageParsed.gameState });
       }
 
@@ -256,17 +257,22 @@ export default function GameState({ navigation, route, player }: any) {
           );
 
           dispatch({
-            type: 'marblesCoordinateToAnimate',
-            value: marblesCoordinateToAnimate,
+            type: 'animatedMarble',
+            value: {
+              marblesCoordinate: marblesCoordinateToAnimate,
+              direction,
+            },
           });
 
-          // const response = await moveMarble(
-          //   gameId,
-          //   coordinates,
-          //   playerForAPI,
-          //   direction,
-          //   player.token,
-          // );
+          setTimeout(async () => {
+            const response = await moveMarble(
+              gameId,
+              coordinates,
+              playerForAPI,
+              direction,
+              player.token,
+            );
+          }, 1000);
         }
       }
     } catch (error) {
@@ -296,7 +302,7 @@ export default function GameState({ navigation, route, player }: any) {
           <Board
             board={state.game?.board}
             setMarbleClicked={setMarbleClicked}
-            marblesCoordinateToAnimate={state.marblesCoordinateToAnimate}
+            animatedMarble={state.animatedMarble}
           />
           <Controls checkAndMoveMarble={checkAndMoveMarble} />
           {state.players.map((player) => (

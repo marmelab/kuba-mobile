@@ -1,28 +1,33 @@
 import React, { useState } from 'react';
 import { Animated } from 'react-native';
+import { getAnimatedActionByDirection } from './animatedActionByDirection';
 
-export const TranslateView = ({ activated, style, children }: any) => {
+export const TranslateView = ({
+  activated,
+  direction,
+  style,
+  children,
+}: any) => {
   const [translateAnimation] = useState(new Animated.Value(0));
+  const actionByDirection = getAnimatedActionByDirection(direction);
 
+  let styleView = style;
   Animated.timing(translateAnimation, {
-    toValue: activated ? 50 : 0,
+    toValue: activated ? actionByDirection.value : 0,
     duration: 300,
     useNativeDriver: true,
   }).start();
 
-  const animatedStyles = {
-    translate: {
+  if (direction) {
+    styleView = {
+      ...style,
       transform: [
         {
-          translateX: translateAnimation,
+          [actionByDirection.translate]: translateAnimation,
         },
       ],
-    },
-  };
+    };
+  }
 
-  return (
-    <Animated.View style={[style, animatedStyles.translate]}>
-      {children}
-    </Animated.View>
-  );
+  return <Animated.View style={[styleView]}>{children}</Animated.View>;
 };
