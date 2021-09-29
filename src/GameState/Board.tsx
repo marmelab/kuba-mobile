@@ -1,12 +1,13 @@
 import { Box, View } from 'native-base';
 import React from 'react';
+import { ImageBackground } from 'react-native';
 import { BOARD_GREEN } from './boardColors';
 import { convertBoardToBoardCoordinate } from './convertBoardToBoardCoordinate';
 import { Marble } from './Marble';
 
 export const Board = (props: any) => {
   const board = props.board;
-  const boardSize = props.preview ? '128px' : '360px';
+  const boardSize = props.preview ? '128px' : '364px';
   const marbleColorSize = props.preview ? '16px' : '48px';
   const marbleEmptySize = props.preview ? '8px' : '16px';
 
@@ -18,11 +19,14 @@ export const Board = (props: any) => {
   const boxMarbleSizePourcent = `${boxMarbleSize}%`;
 
   return (
-    <View
-      position="relative"
-      width={boardSize}
-      height={boardSize}
-      bg="cyan.500"
+    <ImageBackground
+      source={require('./board.png')}
+      resizeMode="cover"
+      style={{
+        position: 'relative',
+        width: boardSize,
+        height: boardSize,
+      }}
     >
       {boardCoordinate.map((item) => (
         <Box
@@ -41,16 +45,18 @@ export const Board = (props: any) => {
               : ''
           }
         >
-          <Marble
-            value={item.value}
-            size={item.value === 0 ? marbleEmptySize : marbleColorSize}
-            rowIndex={item.y}
-            cellIndex={item.x}
-            setMarbleClickedCoordinates={setMarbleClickedCoordinates}
-            setMarbleClicked={props.setMarbleClicked}
-          />
+          {item.value != 0 && (
+            <Marble
+              value={item.value}
+              size={marbleColorSize}
+              rowIndex={item.y}
+              cellIndex={item.x}
+              setMarbleClickedCoordinates={setMarbleClickedCoordinates}
+              setMarbleClicked={props.setMarbleClicked}
+            />
+          )}
         </Box>
       ))}
-    </View>
+    </ImageBackground>
   );
 };
