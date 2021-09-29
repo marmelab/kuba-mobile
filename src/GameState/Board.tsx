@@ -6,11 +6,26 @@ import { convertBoardToBoardCoordinate } from './convertBoardToBoardCoordinate';
 import { Marble } from './Marble';
 import { TranslateView } from './TranslateView';
 
+const marbleIsAnimated = (
+  marbleCoordinate: any,
+  marblesCoordinateToAnimate: any,
+) => {
+  if (!marblesCoordinateToAnimate || marblesCoordinateToAnimate.length < 1) {
+    return false;
+  }
+
+  return marblesCoordinateToAnimate.find(
+    (item: any) =>
+      item.x === marbleCoordinate.x && item.y === marbleCoordinate.y,
+  );
+};
+
 export const Board = (props: any) => {
   const board = props.board;
   const boardSize = props.preview ? '128px' : '364px';
   const marbleColorSize = props.preview ? '16px' : '48px';
   const marbleEmptySize = props.preview ? '8px' : '16px';
+  const marblesCoordinateToAnimate = props.marblesCoordinateToAnimate;
 
   const [marbleClickedCoordinates, setMarbleClickedCoordinates] =
     React.useState<{ x: number; y: number } | null>(null);
@@ -18,28 +33,6 @@ export const Board = (props: any) => {
   const boardCoordinate = convertBoardToBoardCoordinate(board);
   const boxMarbleSize = 100 / board.length;
   const boxMarbleSizePourcent = `${boxMarbleSize}%`;
-
-  const getStyleAnimated = (item: any) => {
-    if (
-      marbleClickedCoordinates?.x === item.x &&
-      marbleClickedCoordinates?.y === item.y
-    ) {
-      return [
-        {
-          transition: 'all 0.5s ease-in-out',
-          transform: [{ translateX: 50 }],
-        },
-      ];
-    }
-
-    return [
-      {
-        transition: 'all 0.5s ease-in-out',
-        transform: [{ translateX: 0 }],
-      },
-    ];
-  };
-
   return (
     <ImageBackground
       source={require('./board.png')}
@@ -52,7 +45,7 @@ export const Board = (props: any) => {
     >
       {boardCoordinate.map((item) => (
         <TranslateView
-          activated={false}
+          activated={marbleIsAnimated(item, marblesCoordinateToAnimate)}
           style={{
             position: 'absolute',
             left: `${item.x * boxMarbleSize}%`,
@@ -68,7 +61,7 @@ export const Board = (props: any) => {
             bg={
               marbleClickedCoordinates?.x === item.x &&
               marbleClickedCoordinates?.y === item.y
-                ? '#0bf220'
+                ? BOARD_GREEN
                 : ''
             }
           >

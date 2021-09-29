@@ -22,12 +22,14 @@ import { Board } from './Board';
 import { Marble } from './Marble';
 import { Controls } from './Controls';
 import { useNavigation } from '../navigation/useNavigation';
+import { getMarblesCoordinateToAnimate } from './getMarblesCoordinateToAnimate';
 
 const initialState: GameInitialization = {
   players: [],
   game: undefined,
   isLoading: true,
   error: undefined,
+  marblesCoordinateToAnimate: undefined,
 };
 
 const reducer = (
@@ -247,7 +249,17 @@ export default function GameState({ navigation, route, player }: any) {
             y: state.game.marbleClicked.y,
           };
           const playerForAPI = getPlayerObject(player);
-          const marblesToMove = getMarblesToMove(coordinates, direction);
+          const marblesCoordinateToAnimate = getMarblesCoordinateToAnimate(
+            coordinates,
+            state.game.graph,
+            direction,
+          );
+
+          dispatch({
+            type: 'marblesCoordinateToAnimate',
+            value: marblesCoordinateToAnimate,
+          });
+
           // const response = await moveMarble(
           //   gameId,
           //   coordinates,
@@ -265,46 +277,6 @@ export default function GameState({ navigation, route, player }: any) {
       });
     }
   }
-
-  const getMarblesToMove = (marbleCoordinate: any, direction: string) => {
-    if (!marbleCoordinate || !state?.game?.graph || !direction) {
-      return [];
-    }
-    const graph = state.game.graph;
-    let currentNode =
-      graph.nodes[`${marbleCoordinate.x},${marbleCoordinate.y}`];
-
-    const nodes = [currentNode];
-    while (true) {
-      const edge = graph.edges.find((edge) => {
-        return (
-          edge.direction === direction &&
-          edge.from === `${currentNode.x},${currentNode.y}`
-        );
-      });
-
-      if (!edge || !graph.nodes[edge.to]) {
-        break;
-      }
-
-      currentNode = graph.nodes[edge.to];
-      if (currentNode.value == 0) {
-        break;
-      }
-      nodes.push(currentNode);
-    }
-
-    console.log(nodes);
-
-    // let previousValue = 0;
-    // nodes.map((node) => {
-    //   const tmpValue = node.value;
-    //   node.value = previousValue;
-    //   previousValue = tmpValue;
-    // });
-
-    // return graph;
-  };
 
   return (
     <Flex flex={1}>
@@ -324,6 +296,7 @@ export default function GameState({ navigation, route, player }: any) {
           <Board
             board={state.game?.board}
             setMarbleClicked={setMarbleClicked}
+            marblesCoordinateToAnimate={state.marblesCoordinateToAnimate}
           />
           <Controls checkAndMoveMarble={checkAndMoveMarble} />
           {state.players.map((player) => (

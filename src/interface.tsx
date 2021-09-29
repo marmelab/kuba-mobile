@@ -33,6 +33,7 @@ export interface GameInitialization {
   game: Game | undefined;
   isLoading: boolean;
   error: any | undefined;
+  marblesCoordinateToAnimate: any | undefined;
 }
 
 export interface Node {
