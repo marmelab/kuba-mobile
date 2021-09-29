@@ -38,6 +38,7 @@ export const Board = (props: any) => {
     >
       {boardCoordinate.map((item) => (
         <Box
+          zIndex={1}
           alignItems="center"
           justifyContent="center"
           key={item.x + ',' + item.y}
