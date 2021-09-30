@@ -9,8 +9,8 @@ export const Marble = (props: any) => {
     <Circle size={size} m={0} p={0} bgColor={getMarbleColor(props.value)} />
   );
 
-  const marbleClick = async () => {
-    await props.setMarbleClicked({
+  const handleClickMarble = async () => {
+    props.setMarbleClicked({
       x: props.cellIndex,
       y: props.rowIndex,
       value: props.value,
@@ -23,7 +23,7 @@ export const Marble = (props: any) => {
   };
 
   return (
-    <Pressable p={0} onPress={() => marbleClick()}>
+    <Pressable p={0} onPress={() => handleClickMarble()}>
       {child}
     </Pressable>
   );
