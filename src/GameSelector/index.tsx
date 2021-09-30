@@ -66,6 +66,7 @@ export default function ({ navigation, player, setUser }: any) {
           <UserGamesList
             userGames={userGames}
             navigateToGameState={navigateToGameState}
+            mobilePlayer={player}
           />
         </View>
       )}

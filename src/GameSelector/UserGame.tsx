@@ -8,10 +8,15 @@ import { getGameStatusColor } from './gameStatusColors';
 interface UserGameProps {
   navigateToGameState: (id: number | undefined) => void;
   game: Game | undefined;
+  mobilePlayer: any;
 }
 
-export const UserGame = ({ game, navigateToGameState }: UserGameProps) => {
-  const colors = getGameStatusColor(!!game?.hasWinner);
+export const UserGame = ({
+  game,
+  navigateToGameState,
+  mobilePlayer,
+}: UserGameProps) => {
+  const colors = getGameStatusColor(mobilePlayer, game?.winnerId);
   return (
     <Box
       bg={{

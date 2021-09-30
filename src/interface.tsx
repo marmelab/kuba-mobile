@@ -2,11 +2,11 @@ export interface Game {
   id: number;
   board: JSON | null;
   graph?: Graph | null;
-  currentPlayer: number | null;
+  currentPlayerId: number | null;
   players: Player[] | null;
   directionSelected: string | null;
   marbleClicked: Node | null;
-  hasWinner: boolean;
+  winnerId: number | null;
   started: boolean;
 }
 
@@ -34,7 +34,7 @@ export interface GameInitialization {
   isLoading: boolean;
   error: any | undefined;
   animatedMarble: { marblesCoordinate: Node[]; direcition: string } | undefined;
-  moveMarbleReference: any | undefined;
+  moveMarbleReference: MoveMarbleReference | undefined;
 }
 
 export interface Node {
@@ -58,3 +58,11 @@ export interface Graph {
 }
 
 export type Direction = 'N' | 'S' | 'E' | 'W';
+
+export interface MoveMarbleReference {
+  gameId: number;
+  coordinates: any;
+  playerForAPI: any;
+  direction: string;
+  playerToken: string;
+}

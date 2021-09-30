@@ -17,7 +17,12 @@ import {
 } from 'native-base';
 import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { API_URL, GATEWAY_URL } from '../constants';
-import { Game, GameInitialization, User } from '../interface';
+import {
+  Game,
+  GameInitialization,
+  MoveMarbleReference,
+  User,
+} from '../interface';
 import { Board } from './Board';
 import { Marble } from './Marble';
 import { Controls } from './Controls';
@@ -56,13 +61,7 @@ export default function GameState({ navigation, route, player }: any) {
 
   useEffect(() => {
     if (!!state.animatedMarble && !!state.moveMarbleReference) {
-      moveMarble(
-        state.moveMarbleReference.gameId,
-        state.moveMarbleReference.coordinates,
-        state.moveMarbleReference.playerForAPI,
-        state.moveMarbleReference.direction,
-        state.moveMarbleReference.token,
-      );
+      moveMarble(state.moveMarbleReference);
 
       dispatch({ type: 'moveMarbleReference', value: undefined });
     }
@@ -191,7 +190,7 @@ export default function GameState({ navigation, route, player }: any) {
             break;
 
           case 'error':
-            if (state.game?.currentPlayer === player.id) {
+            if (state.game?.currentPlayerId === player.id) {
               toast.show({
                 title: 'Error',
                 status: 'error',
@@ -293,7 +292,7 @@ export default function GameState({ navigation, route, player }: any) {
               coordinates,
               playerForAPI,
               direction,
-              token: player.token,
+              playerToken: player.token,
             },
           });
 
@@ -328,7 +327,7 @@ export default function GameState({ navigation, route, player }: any) {
         </View>
       ) : !state.error ? (
         <ScrollView p={6} contentContainerStyle={{ paddingBottom: 24 }}>
-          <ModalWin navigation={navigation} showModal={state.game?.hasWinner} />
+          <ModalWin navigation={navigation} showModal={state.game?.winnerId} />
           <GameInfo game={state.game} />
           <Board
             board={state.game?.board}
@@ -399,7 +398,7 @@ function GameInfo(props: any) {
           <Text fontSize="lg" bold color="white" pr={2}>
             Has Winner:
           </Text>
-          {game?.hasWinner ? (
+          {game?.winnerId ? (
             <CheckIcon color="green.600" />
           ) : (
             <SmallCloseIcon color="red.600" />
@@ -408,7 +407,7 @@ function GameInfo(props: any) {
       </HStack>
       <Stack p={4} space={2}>
         <Text fontSize="lg" bold color="white">
-          Player turn: #{game?.currentPlayer || game?.currentPlayerId}
+          Player turn: #{game?.currentPlayerId}
         </Text>
       </Stack>
     </Box>
@@ -512,23 +511,20 @@ async function isMovePossible(
   }
 }
 
-async function moveMarble(
-  gameId: number,
-  marbleClicked: any,
-  player: any,
-  direction: string,
-  playerToken: string,
-) {
-  return await fetch(`${API_URL}/games/${gameId}/move-marble`, {
-    method: 'POST',
-    body: JSON.stringify({
-      coordinates: marbleClicked,
-      direction,
-      player,
-    }),
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: 'Bearer ' + playerToken,
+async function moveMarble(moveMarbleReference: MoveMarbleReference) {
+  return await fetch(
+    `${API_URL}/games/${moveMarbleReference.gameId}/move-marble`,
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        coordinates: moveMarbleReference.coordinates,
+        direction: moveMarbleReference.direction,
+        player: moveMarbleReference.playerForAPI,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + moveMarbleReference.playerToken,
+      },
     },
-  });
+  );
 }

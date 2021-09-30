@@ -12,7 +12,7 @@ export const getMarblesCoordinateToAnimate = (
   let currentNode = graph.nodes[`${marbleCoordinate.x},${marbleCoordinate.y}`];
 
   const nodes = [currentNode];
-  while (true) {
+  while (currentNode.value != -1) {
     const edge = graph.edges.find((edge) => {
       return (
         edge.direction === direction &&
