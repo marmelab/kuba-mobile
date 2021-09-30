@@ -325,18 +325,13 @@ export default function GameState({ navigation, route, player }: any) {
           <Spinner size="lg" />
         </View>
       ) : !state.error ? (
-        <ScrollView p={6} contentContainerStyle={{ paddingBottom: 24 }}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 24 }}>
           <ModalWin navigation={navigation} showModal={state.game?.winnerId} />
           <GameInfo game={state.game} currentPlayer={player} />
           <GameUser
             user={getMobileUserInformation()}
             opponent={false}
             key={player.id}
-          />
-          <Board
-            board={state.game?.board}
-            setMarbleClicked={setMarbleClicked}
-            animatedMarble={state.animatedMarble}
           />
           <Center p={6}>
             <Board
@@ -423,7 +418,10 @@ function GameUser(props: any) {
         <HStack alignItems="center" justifyContent="space-between" space={4}>
           <Stack space={2}>
             <Heading size="md" ml={-1} color="white">
-              {props.opponent ? `#${user.username}` : 'Your'} captures:
+              {props.opponent
+                ? `#${user.username ? user.username : 'Opponent'}`
+                : 'Your'}{' '}
+              captures:
             </Heading>
           </Stack>
           <Stack>
@@ -431,17 +429,16 @@ function GameUser(props: any) {
           </Stack>
         </HStack>
         <HStack>
-          {user?.marblesWon && user?.marblesWon.length > 0 && (
+          {user?.marblesWon && user?.marblesWon.length > 0 ? (
             <View>
-              <Text bold color="white">
-                Marbles won:
-              </Text>
               <HStack>
                 {user?.marblesWon?.map((marble, index) => (
                   <Marble value={marble} size={4} key={index} />
                 ))}
               </HStack>
             </View>
+          ) : (
+            <Text color="white">No marbles</Text>
           )}
         </HStack>
       </Stack>

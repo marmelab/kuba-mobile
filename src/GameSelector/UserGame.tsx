@@ -35,17 +35,25 @@ export const UserGame = ({
       <Pressable onPress={() => navigateToGameState(game?.id)}>
         <HStack space={3}>
           <Board board={game?.board} preview />
-          <VStack justifyContent="space-between">
+          <VStack justifyContent="space-around">
             <Text color={colors.foreground} bold>
               Game #{game?.id}
             </Text>
-            <Text color={colors.foreground}>Versus Player #Other</Text>
+            <Text color={colors.foreground}>
+              Last move:
+              {new Date(game?.lastMoveDate as string).toLocaleDateString(
+                'fr-FR',
+              )}
+            </Text>
             <Text
               fontSize="xs"
               color={colors.foreground}
               alignSelf="flex-start"
             >
-              Game.timeStamp
+              Creation date:
+              {new Date(game?.creationDate as string).toLocaleDateString(
+                'fr-FR',
+              )}
             </Text>
           </VStack>
         </HStack>
