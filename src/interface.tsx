@@ -8,6 +8,8 @@ export interface Game {
   marbleClicked: Node | null;
   winnerId: number | null;
   started: boolean;
+  lastMoveDate?: string;
+  creationDate?: string;
 }
 
 export interface Player {

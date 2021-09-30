@@ -11,6 +11,10 @@ interface UserGameProps {
   mobilePlayer: any;
 }
 
+const getDateFormat = (date: string) => {
+  return new Date(date).toLocaleDateString('fr-FR');
+};
+
 export const UserGame = ({
   game,
   navigateToGameState,
@@ -35,17 +39,21 @@ export const UserGame = ({
       <Pressable onPress={() => navigateToGameState(game?.id)}>
         <HStack space={3}>
           <Board board={game?.board} preview />
-          <VStack justifyContent="space-between">
+          <VStack justifyContent="space-around">
             <Text color={colors.foreground} bold>
               Game #{game?.id}
             </Text>
-            <Text color={colors.foreground}>Versus Player #Other</Text>
+            <Text color={colors.foreground}>
+              Last move:
+              {getDateFormat(game?.lastMoveDate as string)}
+            </Text>
             <Text
               fontSize="xs"
               color={colors.foreground}
               alignSelf="flex-start"
             >
-              Game.timeStamp
+              Creation date:
+              {getDateFormat(game?.creationDate as string)}
             </Text>
           </VStack>
         </HStack>

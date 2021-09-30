@@ -1,4 +1,4 @@
-import { FormControl, Modal, Button, Input, Text } from 'native-base';
+import { FormControl, Modal, Button, Input } from 'native-base';
 import React from 'react';
 
 interface ModalGameJoinProps {
