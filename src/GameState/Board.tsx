@@ -3,6 +3,7 @@ import React from 'react';
 import { ImageBackground } from 'react-native';
 import { BOARD_GREEN } from './boardColors';
 import { convertBoardToBoardCoordinate } from './convertBoardToBoardCoordinate';
+import { DirectionControl } from './DirectionControl';
 import { Marble } from './Marble';
 import { BOARD_PADDING, BOARD_SIZE, MARBLE_SIZE } from './sizes';
 import { TranslateView } from './TranslateView';
@@ -56,45 +57,93 @@ export const Board = (props: any) => {
           height: '100%',
         }}
       >
-        {boardCoordinate.map((item) => (
-          <TranslateView
-            activated={marbleIsAnimated(
-              item,
-              animatedMarble?.marblesCoordinate,
-            )}
-            direction={animatedMarble?.direction}
-            style={{
-              position: 'absolute',
-              left: `${item.x * boxMarbleSize}%`,
-              top: `${item.y * boxMarbleSize}%`,
-              width: boxMarbleSizePourcent,
-              height: boxMarbleSizePourcent,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            key={item.x + ',' + item.y}
-          >
-            <Box
-              bg={
-                marbleClickedCoordinates?.x === item.x &&
-                marbleClickedCoordinates?.y === item.y
-                  ? BOARD_GREEN
-                  : ''
-              }
-            >
-              {item.value != 0 && (
-                <Marble
-                  value={item.value}
-                  size={marbleColorSize}
-                  rowIndex={item.y}
-                  cellIndex={item.x}
-                  setMarbleClickedCoordinates={setMarbleClickedCoordinates}
-                  setMarbleClicked={props.setMarbleClicked}
-                />
+        {boardCoordinate.map((item) => {
+          let zIndex = 0;
+          if (
+            marbleClickedCoordinates?.x === item.x &&
+            marbleClickedCoordinates?.y === item.y
+          ) {
+            zIndex = 1;
+          }
+          return (
+            <TranslateView
+              activated={marbleIsAnimated(
+                item,
+                animatedMarble?.marblesCoordinate,
               )}
-            </Box>
-          </TranslateView>
-        ))}
+              direction={animatedMarble?.direction}
+              style={{
+                position: 'absolute',
+                left: `${item.x * boxMarbleSize}%`,
+                top: `${item.y * boxMarbleSize}%`,
+                width: boxMarbleSizePourcent,
+                height: boxMarbleSizePourcent,
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: zIndex,
+                elevation: zIndex,
+              }}
+              key={item.x + ',' + item.y}
+            >
+              <Box
+                bg={
+                  marbleClickedCoordinates?.x === item.x &&
+                  marbleClickedCoordinates?.y === item.y
+                    ? BOARD_GREEN
+                    : ''
+                }
+              >
+                {item.value != 0 && (
+                  <Marble
+                    value={item.value}
+                    size={marbleColorSize}
+                    rowIndex={item.y}
+                    cellIndex={item.x}
+                    setMarbleClickedCoordinates={setMarbleClickedCoordinates}
+                    setMarbleClicked={props.setMarbleClicked}
+                    clicked={
+                      marbleClickedCoordinates?.x === item.x &&
+                      marbleClickedCoordinates?.y === item.y
+                    }
+                  />
+                )}
+              </Box>
+            </TranslateView>
+          );
+        })}
+
+        {!props.preview && marbleClickedCoordinates && (
+          <>
+            <DirectionControl
+              direction="N"
+              checkAndMoveMarble={props.checkAndMoveMarble}
+              coordinates={marbleClickedCoordinates}
+              boxMarbleSize={boxMarbleSize}
+              setMarbleClickedCoordinates={setMarbleClickedCoordinates}
+            />
+            <DirectionControl
+              direction="E"
+              checkAndMoveMarble={props.checkAndMoveMarble}
+              coordinates={marbleClickedCoordinates}
+              boxMarbleSize={boxMarbleSize}
+              setMarbleClickedCoordinates={setMarbleClickedCoordinates}
+            />
+            <DirectionControl
+              direction="S"
+              checkAndMoveMarble={props.checkAndMoveMarble}
+              coordinates={marbleClickedCoordinates}
+              boxMarbleSize={boxMarbleSize}
+              setMarbleClickedCoordinates={setMarbleClickedCoordinates}
+            />
+            <DirectionControl
+              direction="W"
+              checkAndMoveMarble={props.checkAndMoveMarble}
+              coordinates={marbleClickedCoordinates}
+              boxMarbleSize={boxMarbleSize}
+              setMarbleClickedCoordinates={setMarbleClickedCoordinates}
+            />
+          </>
+        )}
       </ImageBackground>
     </View>
   );

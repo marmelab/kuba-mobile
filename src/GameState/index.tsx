@@ -348,6 +348,7 @@ export default function GameState({ navigation, route, player }: any) {
               board={state.game?.board}
               setMarbleClicked={setMarbleClicked}
               animatedMarble={state.animatedMarble}
+              checkAndMoveMarble={checkAndMoveMarble}
             />
           </Center>
           <Center>
