@@ -25,7 +25,6 @@ type MarbleProps = {
 export const Marble = (props: MarbleProps) => {
   const [isXDisabled, setIsXDisabled] = React.useState(false);
   const [isYDisabled, setIsYDisabled] = React.useState(false);
-  const [direction, setDirection] = React.useState('');
 
   const size = props.size;
   const child = (
