@@ -12,6 +12,7 @@ export interface Game {
 
 export interface Player {
   playerNumber: number;
+  playerId: number;
   marbleColor: number;
   marblesWon: number[];
 }
@@ -40,4 +41,4 @@ export interface Node {
   y: number;
   value: number;
   isExit: Boolean;
-};
+}

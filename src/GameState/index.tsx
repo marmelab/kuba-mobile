@@ -55,7 +55,7 @@ export default function GameState({ navigation, route, player }: any) {
       const json = (await response.json()) as Game;
       dispatch({ type: 'game', value: json });
       if (json.players) {
-        const ids = json.players.map((pl) => pl.playerNumber);
+        const ids = json.players.map((pl) => pl.playerId);
         await getPlayers(ids);
       }
     } catch (error) {
@@ -90,7 +90,7 @@ export default function GameState({ navigation, route, player }: any) {
 
   const getPlayerObject = (player: User) => {
     const playerGame = state?.game?.players?.find(
-      (p) => p.playerNumber === player.id,
+      (p) => p.playerId === player.id,
     );
     return { ...playerGame, ...player };
   };
@@ -283,6 +283,8 @@ export default function GameState({ navigation, route, player }: any) {
           <Board
             board={state.game?.board}
             setMarbleClicked={setMarbleClicked}
+            checkAndMoveMarble={checkAndMoveMarble}
+            preview={false}
           />
           <Controls checkAndMoveMarble={checkAndMoveMarble} />
           {state.players.map((player) => (
@@ -390,7 +392,7 @@ function GameUser(props: any) {
             </Heading>
           </Stack>
           <Stack>
-            <Marble value={user.marbleColor} size={10} />
+            <Marble value={user.marbleColor} size={10} preview={true} if />
           </Stack>
         </HStack>
         <HStack>
@@ -401,7 +403,7 @@ function GameUser(props: any) {
               </Text>
               <HStack>
                 {user?.marblesWon?.map((marble, index) => (
-                  <Marble value={marble} size={4} key={index} />
+                  <Marble value={marble} size={4} key={index} preview={true} />
                 ))}
               </HStack>
             </View>
