@@ -4,7 +4,7 @@ import { ImageBackground } from 'react-native';
 import { BOARD_GREEN } from './boardColors';
 import { convertBoardToBoardCoordinate } from './convertBoardToBoardCoordinate';
 import { Marble } from './Marble';
-import { BOARD_SIZE, MARBLE_SIZE } from './sizes';
+import { BOARD_PADDING, BOARD_SIZE, MARBLE_SIZE } from './sizes';
 import { TranslateView } from './TranslateView';
 
 const BOARD_PNG = require('./board.png');
@@ -26,6 +26,9 @@ const marbleIsAnimated = (
 export const Board = (props: any) => {
   const board = props.board;
   const boardSize = props.preview ? BOARD_SIZE.preview : BOARD_SIZE.full;
+  const boardPadding = props.preview
+    ? BOARD_PADDING.preview
+    : BOARD_PADDING.full;
   const marbleColorSize = props.preview
     ? MARBLE_SIZE.preview
     : MARBLE_SIZE.full;
@@ -38,7 +41,12 @@ export const Board = (props: any) => {
   const boxMarbleSize = 100 / board.length;
   const boxMarbleSizePourcent = `${boxMarbleSize}%`;
   return (
-    <View width={boardSize} height={boardSize}>
+    <View
+      width={boardSize}
+      height={boardSize}
+      p={boardPadding}
+      backgroundColor="#417a84"
+    >
       <ImageBackground
         source={BOARD_PNG}
         resizeMode="cover"

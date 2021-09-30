@@ -13,6 +13,7 @@ import {
   View,
   Button,
   Center,
+  VStack,
 } from 'native-base';
 import React, { useEffect, useReducer, useState } from 'react';
 import { API_URL, GATEWAY_URL } from '../constants';
@@ -174,13 +175,13 @@ export default function GameState({ navigation, route, player }: any) {
 
           case 'hasWinner':
             toast.show({
-              title: 'Player turn',
+              title: 'Winner',
               status:
-                messageParsed.event.data.playerWinner === player.id
+                messageParsed.event.data.playerWinner.playerId === player.id
                   ? 'success'
                   : 'error',
               description: `${
-                messageParsed.event.data.playerWinner === player.id
+                messageParsed.event.data.playerWinner.playerId === player.id
                   ? 'Congratulations !! '
                   : 'Better luck next time'
               }`,
@@ -326,12 +327,22 @@ export default function GameState({ navigation, route, player }: any) {
       ) : !state.error ? (
         <ScrollView contentContainerStyle={{ paddingBottom: 24 }}>
           <ModalWin navigation={navigation} showModal={state.game?.winnerId} />
-          <GameInfo game={state.game} currentPlayer={player} />
-          <GameUser
+          <GameInfo
+            game={state.game}
+            currentPlayer={player}
             user={getUserInformation(false, player.id)}
-            opponent={false}
-            key={player.id}
           />
+          <HStack width={'100%'} p={0} m={0}>
+            <GameUser
+              user={getUserInformation(false, player.id)}
+              opponent={false}
+              key={player.id}
+            />
+            <GameUser
+              user={getUserInformation(true, player.id)}
+              opponent={true}
+            />
+          </HStack>
           <Center p={6}>
             <Board
               board={state.game?.board}
@@ -342,10 +353,6 @@ export default function GameState({ navigation, route, player }: any) {
           <Center>
             <Controls checkAndMoveMarble={checkAndMoveMarble} />
           </Center>
-          <GameUser
-            user={getUserInformation(true, player.id)}
-            opponent={true}
-          />
         </ScrollView>
       ) : (
         <View
