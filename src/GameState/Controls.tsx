@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, HStack, Button } from 'native-base';
+import { HStack, Button } from 'native-base';
 import { DIRECTION_CHARS } from '../constants';
 
 interface ControlProps {

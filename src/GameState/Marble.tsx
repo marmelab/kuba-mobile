@@ -1,4 +1,4 @@
-import { Circle, Pressable, Box, View } from 'native-base';
+import { Pressable, View } from 'native-base';
 import React from 'react';
 import { ImageBackground } from 'react-native';
 
