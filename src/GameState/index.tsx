@@ -1,13 +1,11 @@
 import {
   ArrowBackIcon,
   Box,
-  CheckIcon,
   Flex,
   Heading,
   HStack,
   Modal,
   ScrollView,
-  SmallCloseIcon,
   Spinner,
   Stack,
   Text,
@@ -15,11 +13,15 @@ import {
   View,
   Button,
   Center,
-  VStack,
 } from 'native-base';
-import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { API_URL, GATEWAY_URL } from '../constants';
-import { Game, GameInitialization, User } from '../interface';
+import {
+  Game,
+  GameInitialization,
+  MoveMarbleReference,
+  User,
+} from '../interface';
 import { Board } from './Board';
 import { Marble } from './Marble';
 import { Controls } from './Controls';
@@ -58,13 +60,7 @@ export default function GameState({ navigation, route, player }: any) {
 
   useEffect(() => {
     if (!!state.animatedMarble && !!state.moveMarbleReference) {
-      moveMarble(
-        state.moveMarbleReference.gameId,
-        state.moveMarbleReference.coordinates,
-        state.moveMarbleReference.playerForAPI,
-        state.moveMarbleReference.direction,
-        state.moveMarbleReference.token,
-      );
+      moveMarble(state.moveMarbleReference);
 
       dispatch({ type: 'moveMarbleReference', value: undefined });
     }
@@ -193,7 +189,7 @@ export default function GameState({ navigation, route, player }: any) {
             break;
 
           case 'error':
-            if (state.game?.currentPlayer === player.id) {
+            if (state.game?.currentPlayerId === player.id) {
               toast.show({
                 title: 'Error',
                 status: 'error',
@@ -295,7 +291,7 @@ export default function GameState({ navigation, route, player }: any) {
               coordinates,
               playerForAPI,
               direction,
-              token: player.token,
+              playerToken: player.token,
             },
           });
 
@@ -329,13 +325,18 @@ export default function GameState({ navigation, route, player }: any) {
           <Spinner size="lg" />
         </View>
       ) : !state.error ? (
-        <ScrollView contentContainerStyle={{ paddingBottom: 24 }}>
-          <ModalWin navigation={navigation} showModal={state.game?.hasWinner} />
+        <ScrollView p={6} contentContainerStyle={{ paddingBottom: 24 }}>
+          <ModalWin navigation={navigation} showModal={state.game?.winnerId} />
           <GameInfo game={state.game} currentPlayer={player} />
           <GameUser
             user={getMobileUserInformation()}
             opponent={false}
             key={player.id}
+          />
+          <Board
+            board={state.game?.board}
+            setMarbleClicked={setMarbleClicked}
+            animatedMarble={state.animatedMarble}
           />
           <Center p={6}>
             <Board
@@ -395,8 +396,7 @@ function GameInfo(props: any) {
     >
       <Stack p={4} space={2}>
         <Text fontSize="lg" bold color="black">
-          {game?.currentPlayer === props.currentPlayer.id ||
-          game?.currentPlayerId === props.currentPlayer.id
+          {game?.currentPlayerId === props.currentPlayer.id
             ? 'Your turn !'
             : 'Opponent turn !'}
         </Text>
@@ -498,23 +498,20 @@ async function isMovePossible(
   }
 }
 
-async function moveMarble(
-  gameId: number,
-  marbleClicked: any,
-  player: any,
-  direction: string,
-  playerToken: string,
-) {
-  return await fetch(`${API_URL}/games/${gameId}/move-marble`, {
-    method: 'POST',
-    body: JSON.stringify({
-      coordinates: marbleClicked,
-      direction,
-      player,
-    }),
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: 'Bearer ' + playerToken,
+async function moveMarble(moveMarbleReference: MoveMarbleReference) {
+  return await fetch(
+    `${API_URL}/games/${moveMarbleReference.gameId}/move-marble`,
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        coordinates: moveMarbleReference.coordinates,
+        direction: moveMarbleReference.direction,
+        player: moveMarbleReference.playerForAPI,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + moveMarbleReference.playerToken,
+      },
     },
-  });
+  );
 }

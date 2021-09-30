@@ -15,11 +15,11 @@ export const filterGamesByGameState = (
 ) => {
   switch (filterGameState) {
     case GAME_STATE_IN_PROGRESS: {
-      return userGames?.filter((game) => !game.hasWinner);
+      return userGames?.filter((game) => !game.winnerId);
     }
 
     case GAME_STATE_FINISHED: {
-      return userGames?.filter((game) => !!game.hasWinner);
+      return userGames?.filter((game) => !!game.winnerId);
     }
 
     default:

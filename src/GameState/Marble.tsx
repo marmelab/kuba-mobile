@@ -22,8 +22,8 @@ export const Marble = (props: any) => {
     </View>
   );
 
-  const marbleClick = async () => {
-    await props.setMarbleClicked({
+  const handleClickMarble = async () => {
+    props.setMarbleClicked({
       x: props.cellIndex,
       y: props.rowIndex,
       value: props.value,
@@ -36,7 +36,7 @@ export const Marble = (props: any) => {
   };
 
   return (
-    <Pressable p={0} onPress={() => marbleClick()}>
+    <Pressable p={0} onPress={() => handleClickMarble()}>
       {child}
     </Pressable>
   );

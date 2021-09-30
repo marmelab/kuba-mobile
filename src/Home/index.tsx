@@ -172,6 +172,7 @@ export function Home({ navigation, player }: any) {
                 {userLastGames?.map((game) => (
                   <UserGame
                     game={game}
+                    mobilePlayer={player}
                     navigateToGameState={navigateToGameState}
                     key={game.id}
                   />
