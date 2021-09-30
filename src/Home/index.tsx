@@ -178,8 +178,6 @@ export function Home({ navigation, player }: any) {
                   />
                 ))}
                 <Stack
-                  mb="2.5"
-                  mt="1.5"
                   direction={{
                     base: 'column',
                     md: 'row',

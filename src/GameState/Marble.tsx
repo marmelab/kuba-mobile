@@ -5,7 +5,7 @@ import { ImageBackground } from 'react-native';
 const RED_MARBLE = require('./red-marble.png');
 const WHITE_MARBLE = require('./white-marble.png');
 const BLACK_MARBLE = require('./black-marble.png');
-const MARBLE_COLOR_IMAGE = ['', BLACK_MARBLE, WHITE_MARBLE, RED_MARBLE];
+const MARBLE_COLOR_IMAGE = [BLACK_MARBLE, WHITE_MARBLE, RED_MARBLE];
 
 export const Marble = (props: any) => {
   const size = props.size;
@@ -43,5 +43,5 @@ export const Marble = (props: any) => {
 };
 
 const getMarbleColorImage = (value: number): any => {
-  return MARBLE_COLOR_IMAGE[value];
+  return MARBLE_COLOR_IMAGE[value - 1];
 };

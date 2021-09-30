@@ -23,10 +23,13 @@ import {
   User,
 } from '../interface';
 import { Board } from './Board';
-import { Marble } from './Marble';
 import { Controls } from './Controls';
-import { useNavigation } from '../navigation/useNavigation';
+import { GameInfo } from './GameInfo';
+import { GameUser } from './GameUser';
+
 import { getMarblesCoordinateToAnimate } from './getMarblesCoordinateToAnimate';
+import { ModalWin } from './ModalWin';
+import { isMovePossible, moveMarble } from './moveFunctions';
 
 const initialState: GameInitialization = {
   players: [],
@@ -111,16 +114,11 @@ export default function GameState({ navigation, route, player }: any) {
     }
   };
 
-  const getMobileUserInformation = () => {
-    const mobileUserInformation = state.players.find((p) => p.id === player.id);
-    return getPlayerObject(mobileUserInformation);
-  };
-
-  const getOpponentUserInformation = () => {
-    const opponentUserInformation = state.players.find(
-      (p) => p.id !== player.id,
+  const getUserInformation = (getOpponent: boolean, playerId: number) => {
+    const userInformation = state.players.find((p) =>
+      getOpponent ? p.id !== playerId : p.id === playerId,
     );
-    return getPlayerObject(opponentUserInformation);
+    return getPlayerObject(userInformation);
   };
 
   const getPlayerObject = (player: User | undefined) => {
@@ -269,7 +267,7 @@ export default function GameState({ navigation, route, player }: any) {
     }
   };
 
-  async function checkAndMoveMarble(direction: string) {
+  const checkAndMoveMarble = async (direction: string) => {
     try {
       if (await isMovePossible(gameId, player.token, player.id, direction)) {
         if (state.game?.marbleClicked) {
@@ -311,7 +309,7 @@ export default function GameState({ navigation, route, player }: any) {
         description: 'Something went wrong',
       });
     }
-  }
+  };
 
   return (
     <Flex flex={1}>
@@ -329,7 +327,7 @@ export default function GameState({ navigation, route, player }: any) {
           <ModalWin navigation={navigation} showModal={state.game?.winnerId} />
           <GameInfo game={state.game} currentPlayer={player} />
           <GameUser
-            user={getMobileUserInformation()}
+            user={getUserInformation(false, player.id)}
             opponent={false}
             key={player.id}
           />
@@ -343,7 +341,10 @@ export default function GameState({ navigation, route, player }: any) {
           <Center>
             <Controls checkAndMoveMarble={checkAndMoveMarble} />
           </Center>
-          <GameUser user={getOpponentUserInformation()} opponent={true} />
+          <GameUser
+            user={getUserInformation(true, player.id)}
+            opponent={true}
+          />
         </ScrollView>
       ) : (
         <View
@@ -373,142 +374,5 @@ export default function GameState({ navigation, route, player }: any) {
         </View>
       )}
     </Flex>
-  );
-}
-
-function GameInfo(props: any) {
-  const game = props.game;
-  return (
-    <Box
-      shadow={1}
-      bg={{
-        linearGradient: {
-          colors: ['orange.400', 'amber.400'],
-          start: [0, 0],
-          end: [1, 0],
-        },
-      }}
-    >
-      <Stack p={4} space={2}>
-        <Text fontSize="lg" bold color="black">
-          {game?.currentPlayerId === props.currentPlayer.id
-            ? 'Your turn !'
-            : 'Opponent turn !'}
-        </Text>
-      </Stack>
-    </Box>
-  );
-}
-
-function GameUser(props: any) {
-  const user: User = props.user;
-  return (
-    <Box
-      shadow={1}
-      mb={4}
-      bg={{
-        linearGradient: {
-          colors: ['blue.800', 'blue.600'],
-          start: [0, 0],
-          end: [1, 0],
-        },
-      }}
-    >
-      <Stack p={4} space={1}>
-        <HStack alignItems="center" justifyContent="space-between" space={4}>
-          <Stack space={2}>
-            <Heading size="md" ml={-1} color="white">
-              {props.opponent
-                ? `#${user.username ? user.username : 'Opponent'}`
-                : 'Your'}{' '}
-              captures:
-            </Heading>
-          </Stack>
-          <Stack>
-            <Marble value={user.marbleColor} size={10} />
-          </Stack>
-        </HStack>
-        <HStack>
-          {user?.marblesWon && user?.marblesWon.length > 0 ? (
-            <View>
-              <HStack>
-                {user?.marblesWon?.map((marble, index) => (
-                  <Marble value={marble} size={4} key={index} />
-                ))}
-              </HStack>
-            </View>
-          ) : (
-            <Text color="white">No marbles</Text>
-          )}
-        </HStack>
-      </Stack>
-    </Box>
-  );
-}
-
-function ModalWin({ showModal, navigation }: any) {
-  const { navigateToGameSelector } = useNavigation(navigation);
-  const [isOpen, setIsOpen] = useState<boolean>(showModal);
-
-  const handleNavigateButton = () => {
-    navigateToGameSelector();
-    setIsOpen(false);
-  };
-
-  return (
-    <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-      <Modal.Content maxWidth="400px">
-        <Modal.CloseButton />
-        <Modal.Header>The game is over</Modal.Header>
-        <Modal.Footer>
-          <Button
-            variant="ghost"
-            colorScheme="blueGray"
-            onPress={() => handleNavigateButton()}
-          >
-            Go to your games
-          </Button>
-        </Modal.Footer>
-      </Modal.Content>
-    </Modal>
-  );
-}
-
-async function isMovePossible(
-  gameId: number,
-  playerToken: string,
-  player: number,
-  direction: string,
-) {
-  const response = await fetch(
-    `${API_URL}/games/${gameId}/authorized-move?player=${player}&direction=${direction}`,
-    {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + playerToken,
-      },
-    },
-  );
-  if (response.status >= 200 && response.status < 300) {
-    return await response.json();
-  }
-}
-
-async function moveMarble(moveMarbleReference: MoveMarbleReference) {
-  return await fetch(
-    `${API_URL}/games/${moveMarbleReference.gameId}/move-marble`,
-    {
-      method: 'POST',
-      body: JSON.stringify({
-        coordinates: moveMarbleReference.coordinates,
-        direction: moveMarbleReference.direction,
-        player: moveMarbleReference.playerForAPI,
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + moveMarbleReference.playerToken,
-      },
-    },
   );
 }
