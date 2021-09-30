@@ -1,7 +1,6 @@
 import { Pressable, View } from 'native-base';
 import React from 'react';
 import { ImageBackground } from 'react-native';
-import { DirectionControl } from './DirectionControl';
 
 const RED_MARBLE = require('./red-marble.png');
 const WHITE_MARBLE = require('./white-marble.png');

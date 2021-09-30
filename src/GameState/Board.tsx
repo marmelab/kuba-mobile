@@ -40,7 +40,7 @@ export const Board = (props: any) => {
 
   const boardCoordinate = convertBoardToBoardCoordinate(board);
   const boxMarbleSize = 100 / board.length;
-  const boxMarbleSizePourcent = `${boxMarbleSize}%`;
+  const boxMarbleSizePercent = `${boxMarbleSize}%`;
   return (
     <View
       width={boardSize}
@@ -76,8 +76,8 @@ export const Board = (props: any) => {
                 position: 'absolute',
                 left: `${item.x * boxMarbleSize}%`,
                 top: `${item.y * boxMarbleSize}%`,
-                width: boxMarbleSizePourcent,
-                height: boxMarbleSizePourcent,
+                width: boxMarbleSizePercent,
+                height: boxMarbleSizePercent,
                 alignItems: 'center',
                 justifyContent: 'center',
                 zIndex: zIndex,
@@ -114,34 +114,45 @@ export const Board = (props: any) => {
 
         {!props.preview && marbleClickedCoordinates && (
           <>
-            <DirectionControl
-              direction="N"
-              checkAndMoveMarble={props.checkAndMoveMarble}
-              coordinates={marbleClickedCoordinates}
-              boxMarbleSize={boxMarbleSize}
-              setMarbleClickedCoordinates={setMarbleClickedCoordinates}
-            />
-            <DirectionControl
-              direction="E"
-              checkAndMoveMarble={props.checkAndMoveMarble}
-              coordinates={marbleClickedCoordinates}
-              boxMarbleSize={boxMarbleSize}
-              setMarbleClickedCoordinates={setMarbleClickedCoordinates}
-            />
-            <DirectionControl
-              direction="S"
-              checkAndMoveMarble={props.checkAndMoveMarble}
-              coordinates={marbleClickedCoordinates}
-              boxMarbleSize={boxMarbleSize}
-              setMarbleClickedCoordinates={setMarbleClickedCoordinates}
-            />
-            <DirectionControl
-              direction="W"
-              checkAndMoveMarble={props.checkAndMoveMarble}
-              coordinates={marbleClickedCoordinates}
-              boxMarbleSize={boxMarbleSize}
-              setMarbleClickedCoordinates={setMarbleClickedCoordinates}
-            />
+            {marbleClickedCoordinates.y > 0 && (
+              <DirectionControl
+                direction="N"
+                checkAndMoveMarble={props.checkAndMoveMarble}
+                coordinates={marbleClickedCoordinates}
+                boxMarbleSize={boxMarbleSize}
+                setMarbleClickedCoordinates={setMarbleClickedCoordinates}
+              />
+            )}
+
+            {marbleClickedCoordinates.x < 6 && (
+              <DirectionControl
+                direction="E"
+                checkAndMoveMarble={props.checkAndMoveMarble}
+                coordinates={marbleClickedCoordinates}
+                boxMarbleSize={boxMarbleSize}
+                setMarbleClickedCoordinates={setMarbleClickedCoordinates}
+              />
+            )}
+
+            {marbleClickedCoordinates.y < 6 && (
+              <DirectionControl
+                direction="S"
+                checkAndMoveMarble={props.checkAndMoveMarble}
+                coordinates={marbleClickedCoordinates}
+                boxMarbleSize={boxMarbleSize}
+                setMarbleClickedCoordinates={setMarbleClickedCoordinates}
+              />
+            )}
+
+            {marbleClickedCoordinates.x > 0 && (
+              <DirectionControl
+                direction="W"
+                checkAndMoveMarble={props.checkAndMoveMarble}
+                coordinates={marbleClickedCoordinates}
+                boxMarbleSize={boxMarbleSize}
+                setMarbleClickedCoordinates={setMarbleClickedCoordinates}
+              />
+            )}
           </>
         )}
       </ImageBackground>
