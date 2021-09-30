@@ -22,7 +22,7 @@ export default function ({ navigation, player, setUser }: any) {
     try {
       const response = await fetch(
         `${API_URL}/games?filter=${encodeURI(
-          JSON.stringify({ playerNumber: [player.id] }),
+          JSON.stringify({ playerId: [player.id] }),
         )}`,
         {
           method: 'GET',
