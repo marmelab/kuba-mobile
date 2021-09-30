@@ -12,9 +12,14 @@ GAME_STATUS_COLORS[2] = {
   foreground: 'black',
 };
 
-export const getGameStatusColor = (gameHasWinner: boolean) => {
-  if (gameHasWinner) {
-    return GAME_STATUS_COLORS[1];
+export const getGameStatusColor = (
+  mobilePlayer: any,
+  winnerId: number | undefined | null,
+) => {
+  if (!!winnerId) {
+    return mobilePlayer.id === winnerId
+      ? GAME_STATUS_COLORS[1]
+      : GAME_STATUS_COLORS[2];
   }
   return GAME_STATUS_COLORS[0];
 };

@@ -13,15 +13,16 @@ import { UserGame } from './UserGame';
 interface UserGamesListProps {
   navigateToGameState: (id: number | undefined) => void;
   userGames: Game[] | undefined;
+  mobilePlayer: any;
 }
 
 export const UserGamesList = ({
   userGames,
   navigateToGameState,
+  mobilePlayer,
 }: UserGamesListProps) => {
   const [filter, setFilter] = useState<FilterGameState>(GAME_STATE_IN_PROGRESS);
   const userGamesFiltered = filterGamesByGameState(userGames, filter);
-
   return (
     <View>
       <Flex direction="row" mb={4}>
@@ -86,7 +87,11 @@ export const UserGamesList = ({
           <FlatList
             data={userGamesFiltered}
             renderItem={({ item }) => (
-              <UserGame game={item} navigateToGameState={navigateToGameState} />
+              <UserGame
+                game={item}
+                mobilePlayer={mobilePlayer}
+                navigateToGameState={navigateToGameState}
+              />
             )}
             keyExtractor={(item) => `${item.id}`}
           />

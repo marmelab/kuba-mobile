@@ -15,19 +15,27 @@ import {
   View,
   Button,
 } from 'native-base';
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { API_URL, GATEWAY_URL } from '../constants';
-import { Game, GameInitialization, User } from '../interface';
+import {
+  Game,
+  GameInitialization,
+  MoveMarbleReference,
+  User,
+} from '../interface';
 import { Board } from './Board';
 import { Marble } from './Marble';
 import { Controls } from './Controls';
 import { useNavigation } from '../navigation/useNavigation';
+import { getMarblesCoordinateToAnimate } from './getMarblesCoordinateToAnimate';
 
 const initialState: GameInitialization = {
   players: [],
   game: undefined,
   isLoading: true,
   error: undefined,
+  animatedMarble: undefined,
+  moveMarbleReference: undefined,
 };
 
 const reducer = (
@@ -42,6 +50,22 @@ export default function GameState({ navigation, route, player }: any) {
   const gameId = route.params?.gameId;
   const toast = useToast();
   let WS: any = undefined;
+
+  useEffect(() => {
+    getGame();
+    initWebSocket();
+    return () => {
+      if (WS) WS.close();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!!state.animatedMarble && !!state.moveMarbleReference) {
+      moveMarble(state.moveMarbleReference);
+
+      dispatch({ type: 'moveMarbleReference', value: undefined });
+    }
+  }, [state.animatedMarble]);
 
   const getGame = async () => {
     try {
@@ -104,6 +128,7 @@ export default function GameState({ navigation, route, player }: any) {
       const messageParsed = JSON.parse(message.data);
 
       if (messageParsed.gameState) {
+        dispatch({ type: 'animatedMarble', value: undefined });
         dispatch({ type: 'game', value: messageParsed.gameState });
       }
 
@@ -119,6 +144,18 @@ export default function GameState({ navigation, route, player }: any) {
                   : ''
               } turn`,
             });
+            break;
+
+          case 'animatedMarble':
+            if (messageParsed.event.data.playerId != player.id) {
+              dispatch({
+                type: 'animatedMarble',
+                value: {
+                  marblesCoordinate: messageParsed.event.data.marblesCoordinate,
+                  direction: messageParsed.event.data.direction,
+                },
+              });
+            }
             break;
 
           case 'restart':
@@ -153,11 +190,14 @@ export default function GameState({ navigation, route, player }: any) {
             break;
 
           case 'error':
-            toast.show({
-              title: 'Error',
-              status: 'error',
-              description: messageParsed.event.message,
-            });
+            if (state.game?.currentPlayerId === player.id) {
+              toast.show({
+                title: 'Error',
+                status: 'error',
+                description: messageParsed.event.message,
+              });
+            }
+
             break;
 
           default:
@@ -200,14 +240,6 @@ export default function GameState({ navigation, route, player }: any) {
     };
   };
 
-  useEffect(() => {
-    getGame();
-    initWebSocket();
-    return () => {
-      if (WS) WS.close();
-    };
-  }, []);
-
   const setMarbleClicked = async (marbleClicked: {
     x: number;
     y: number;
@@ -247,13 +279,30 @@ export default function GameState({ navigation, route, player }: any) {
             y: state.game.marbleClicked.y,
           };
           const playerForAPI = getPlayerObject(player);
-          const response = await moveMarble(
-            gameId,
+          const marblesCoordinateToAnimate = getMarblesCoordinateToAnimate(
             coordinates,
-            playerForAPI,
+            state.game.graph,
             direction,
-            player.token,
           );
+
+          dispatch({
+            type: 'moveMarbleReference',
+            value: {
+              gameId,
+              coordinates,
+              playerForAPI,
+              direction,
+              playerToken: player.token,
+            },
+          });
+
+          dispatch({
+            type: 'animatedMarble',
+            value: {
+              marblesCoordinate: marblesCoordinateToAnimate,
+              direction,
+            },
+          });
         }
       }
     } catch (error) {
@@ -278,11 +327,12 @@ export default function GameState({ navigation, route, player }: any) {
         </View>
       ) : !state.error ? (
         <ScrollView p={6} contentContainerStyle={{ paddingBottom: 24 }}>
-          <ModalWin navigation={navigation} showModal={state.game?.hasWinner} />
+          <ModalWin navigation={navigation} showModal={state.game?.winnerId} />
           <GameInfo game={state.game} />
           <Board
             board={state.game?.board}
             setMarbleClicked={setMarbleClicked}
+            animatedMarble={state.animatedMarble}
           />
           <Controls checkAndMoveMarble={checkAndMoveMarble} />
           {state.players.map((player) => (
@@ -348,7 +398,7 @@ function GameInfo(props: any) {
           <Text fontSize="lg" bold color="white" pr={2}>
             Has Winner:
           </Text>
-          {game?.hasWinner ? (
+          {game?.winnerId ? (
             <CheckIcon color="green.600" />
           ) : (
             <SmallCloseIcon color="red.600" />
@@ -357,7 +407,7 @@ function GameInfo(props: any) {
       </HStack>
       <Stack p={4} space={2}>
         <Text fontSize="lg" bold color="white">
-          Player turn: #{game?.currentPlayer || game?.currentPlayerId}
+          Player turn: #{game?.currentPlayerId}
         </Text>
       </Stack>
     </Box>
@@ -414,9 +464,15 @@ function GameUser(props: any) {
 
 function ModalWin({ showModal, navigation }: any) {
   const { navigateToGameSelector } = useNavigation(navigation);
+  const [isOpen, setIsOpen] = useState<boolean>(showModal);
+
+  const handleNavigateButton = () => {
+    navigateToGameSelector();
+    setIsOpen(false);
+  };
 
   return (
-    <Modal isOpen={showModal} onClose={() => (showModal = false)}>
+    <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
       <Modal.Content maxWidth="400px">
         <Modal.CloseButton />
         <Modal.Header>The game is over</Modal.Header>
@@ -424,7 +480,7 @@ function ModalWin({ showModal, navigation }: any) {
           <Button
             variant="ghost"
             colorScheme="blueGray"
-            onPress={() => navigateToGameSelector()}
+            onPress={() => handleNavigateButton()}
           >
             Go to your games
           </Button>
@@ -455,23 +511,20 @@ async function isMovePossible(
   }
 }
 
-async function moveMarble(
-  gameId: number,
-  marbleClicked: any,
-  player: any,
-  direction: string,
-  playerToken: string,
-) {
-  return await fetch(`${API_URL}/games/${gameId}/move-marble`, {
-    method: 'POST',
-    body: JSON.stringify({
-      coordinates: marbleClicked,
-      direction,
-      player,
-    }),
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: 'Bearer ' + playerToken,
+async function moveMarble(moveMarbleReference: MoveMarbleReference) {
+  return await fetch(
+    `${API_URL}/games/${moveMarbleReference.gameId}/move-marble`,
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        coordinates: moveMarbleReference.coordinates,
+        direction: moveMarbleReference.direction,
+        player: moveMarbleReference.playerForAPI,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + moveMarbleReference.playerToken,
+      },
     },
-  });
+  );
 }
