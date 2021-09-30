@@ -17,9 +17,7 @@ export const Board = (props: any) => {
     board.map((row: [], index: number) => {
       const y = index;
       row.map((col: any, index: number) => {
-        const x = index;
-        const value = col;
-        result.push({ x, y, value });
+        result.push({ x: index, y, value: col });
       });
     });
 

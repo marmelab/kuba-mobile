@@ -1,7 +1,7 @@
 import { Circle } from 'native-base';
 import React from 'react';
 import { Animated, StyleProp, StyleSheet, ViewStyle } from 'react-native';
-
+import { DIRECTIONS } from '../constants';
 import {
   PanGestureHandler,
   State,
@@ -25,6 +25,7 @@ type MarbleProps = {
 export const Marble = (props: MarbleProps) => {
   const [isXDisabled, setIsXDisabled] = React.useState(false);
   const [isYDisabled, setIsYDisabled] = React.useState(false);
+  const [direction, setDirection] = React.useState('');
 
   const size = props.size;
   const child = (
@@ -95,8 +96,6 @@ export const Marble = (props: MarbleProps) => {
       if (!isYDisabled) {
         oldCoords.y = event.nativeEvent.absoluteY;
       }
-      setIsYDisabled(false);
-      setIsXDisabled(false);
     }
   };
 
@@ -109,18 +108,18 @@ export const Marble = (props: MarbleProps) => {
 
   const onGestureEventHanlder = (event: any) => {
     if (event.nativeEvent.state === State.ACTIVE) {
-      if (
-        Math.abs(getYdiff(event.nativeEvent.absoluteY)) >
-        Math.abs(getXdiff(event.nativeEvent.absoluteX))
-      ) {
-        if (!isYDisabled) {
-          setIsXDisabled(true);
-        }
-      } else {
-        if (!isXDisabled) {
-          setIsYDisabled(true);
-        }
-      }
+      disableXorYdrag(event);
+    }
+  };
+
+  const disableXorYdrag = (event: any) => {
+    if (
+      Math.abs(getYdiff(event.nativeEvent.absoluteY)) >
+      Math.abs(getXdiff(event.nativeEvent.absoluteX))
+    ) {
+      !isYDisabled && setIsXDisabled(true);
+    } else {
+      !isXDisabled && setIsYDisabled(true);
     }
   };
 
