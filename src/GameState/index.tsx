@@ -81,7 +81,7 @@ export default function GameState({ navigation, route, player }: any) {
       const json = (await response.json()) as Game;
       dispatch({ type: 'game', value: json });
       if (json.players) {
-        const ids = json.players.map((pl) => pl.playerNumber);
+        const ids = json.players.map((pl) => pl.playerId);
         await getPlayers(ids);
       }
     } catch (error) {
@@ -123,8 +123,9 @@ export default function GameState({ navigation, route, player }: any) {
 
   const getPlayerObject = (player: User | undefined) => {
     const playerGame = state?.game?.players?.find(
-      (p) => p.playerNumber === player?.id,
+      (p) => p.playerId === player?.id,
     );
+
     return { ...playerGame, ...player };
   };
 

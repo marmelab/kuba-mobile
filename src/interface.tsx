@@ -13,6 +13,7 @@ export interface Game {
 }
 
 export interface Player {
+  playerId: number;
   playerNumber: number;
   marbleColor: number;
   marblesWon: number[];
