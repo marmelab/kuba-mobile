@@ -22,20 +22,32 @@ export const isMovePossible = async (
   }
 };
 
-export const moveMarble = async (moveMarbleReference: MoveMarbleReference) => {
-  return await fetch(
-    `${API_URL}/games/${moveMarbleReference.gameId}/move-marble`,
+export const moveMarble = async (
+  moveMarbleReference: MoveMarbleReference | undefined,
+) => {
+  const response = await fetch(
+    `${API_URL}/games/${moveMarbleReference?.gameId}/move-marble`,
     {
       method: 'POST',
       body: JSON.stringify({
-        coordinates: moveMarbleReference.coordinates,
-        direction: moveMarbleReference.direction,
-        player: moveMarbleReference.playerForAPI,
+        coordinates: moveMarbleReference?.coordinates,
+        direction: moveMarbleReference?.direction,
+        player: moveMarbleReference?.playerForAPI,
       }),
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + moveMarbleReference.playerToken,
+        Authorization: 'Bearer ' + moveMarbleReference?.playerToken,
       },
     },
   );
+
+  if (!response.ok) {
+    throw Error(response.statusText);
+  }
+
+  if (response.status >= 200 && response.status < 300) {
+    return await response.json();
+  } else {
+    return false;
+  }
 };

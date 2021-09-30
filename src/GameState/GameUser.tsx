@@ -32,7 +32,7 @@ export function GameUser(props: any) {
         <HStack>
           {user?.marblesWon && user?.marblesWon.length > 0 ? (
             <View>
-              <HStack style={{ width: '80%', flex: 1, flexWrap: 'wrap' }}>
+              <HStack style={{ width: '100%', flex: 1, flexWrap: 'wrap' }}>
                 {user?.marblesWon?.map((marble, index) => (
                   <Marble value={marble} size={3} key={index} />
                 ))}
