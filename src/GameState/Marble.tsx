@@ -18,13 +18,20 @@ type MarbleProps = {
   value: number;
   rowIndex?: number;
   cellIndex?: number;
+  checkAndMoveMarble?: Function;
   setMarbleClickedCoordinates?: Function;
   setMarbleClicked?: Function;
+  preview: boolean;
 };
 
 export const Marble = (props: MarbleProps) => {
   const [isXDisabled, setIsXDisabled] = React.useState(false);
   const [isYDisabled, setIsYDisabled] = React.useState(false);
+  const [direction, setDirection] = React.useState('');
+  const [oldY, setOldY] = React.useState(0);
+  const [oldX, setOldX] = React.useState(0);
+  const [isDoingMovement, setIsDoingMovement] = React.useState(false);
+  const [isClickedMarble, setIsClickedMArble] = React.useState(false);
 
   const size = props.size;
   const child = (
@@ -37,7 +44,7 @@ export const Marble = (props: MarbleProps) => {
     />
   );
 
-  if (props.value < 1) {
+  if (props.value < 1 || props.preview) {
     return child;
   }
 
@@ -59,30 +66,37 @@ export const Marble = (props: MarbleProps) => {
     ],
     {
       useNativeDriver: true,
-      listener: (event) => onGestureEventHanlder(event),
+      listener: (event) => onGestureEventListener(event),
     },
   );
 
   const onHandlerStateChange = (event: PanGestureHandlerStateChangeEvent) => {
+    if (props.setMarbleClicked && !isClickedMarble) {
+      props.setMarbleClicked({
+        x: props.cellIndex,
+        y: props.rowIndex,
+        value: props.value,
+        isExit: false,
+      });
+      setIsClickedMArble(true);
+    }
     if (event.nativeEvent.oldState === State.ACTIVE) {
       if (isXDisabled) {
-        translateX.setOffset(oldCoords.x);
         translateX.setValue(0);
       } else {
         lastOffset.x += event.nativeEvent.translationX;
         translateX.setOffset(lastOffset.x);
         translateX.setValue(0);
-        oldCoords.x = event.nativeEvent.absoluteX;
+        setOldX(event.nativeEvent.absoluteX);
       }
 
       if (isYDisabled) {
-        translateY.setOffset(oldCoords.y);
         translateY.setValue(0);
       } else {
         lastOffset.y += event.nativeEvent.translationY;
         translateY.setOffset(lastOffset.y);
         translateY.setValue(0);
-        oldCoords.y = event.nativeEvent.absoluteY;
+        setOldY(event.nativeEvent.absoluteY);
       }
       setIsYDisabled(false);
       setIsXDisabled(false);
@@ -90,24 +104,30 @@ export const Marble = (props: MarbleProps) => {
 
     if (event.nativeEvent.oldState === State.UNDETERMINED) {
       if (!isXDisabled) {
-        oldCoords.x = event.nativeEvent.absoluteX;
+        setOldX(event.nativeEvent.absoluteX);
       }
       if (!isYDisabled) {
-        oldCoords.y = event.nativeEvent.absoluteY;
+        setOldY(event.nativeEvent.absoluteY);
       }
     }
   };
 
   const getYdiff = (newYvalue: number): number => {
-    return newYvalue - oldCoords.y;
+    return newYvalue - oldY;
   };
   const getXdiff = (newXvalue: number): number => {
-    return newXvalue - oldCoords.x;
+    return newXvalue - oldX;
   };
 
-  const onGestureEventHanlder = (event: any) => {
+  const onGestureEventListener = (event: any) => {
     if (event.nativeEvent.state === State.ACTIVE) {
       disableXorYdrag(event);
+      setDirectionString(event);
+      if (direction) {
+        if (props.checkAndMoveMarble) {
+          props.checkAndMoveMarble(direction);
+        }
+      }
     }
   };
 
@@ -119,6 +139,21 @@ export const Marble = (props: MarbleProps) => {
       !isYDisabled && setIsXDisabled(true);
     } else {
       !isXDisabled && setIsYDisabled(true);
+    }
+  };
+
+  const setDirectionString = (event: any) => {
+    if (
+      Math.abs(getYdiff(event.nativeEvent.absoluteY)) >
+      Math.abs(getXdiff(event.nativeEvent.absoluteX))
+    ) {
+      getYdiff(event.nativeEvent.absoluteY) > 0
+        ? setDirection(DIRECTIONS.south)
+        : setDirection(DIRECTIONS.north);
+    } else {
+      getXdiff(event.nativeEvent.absoluteX) > 0
+        ? setDirection(DIRECTIONS.east)
+        : setDirection(DIRECTIONS.west);
     }
   };
 

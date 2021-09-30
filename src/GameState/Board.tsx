@@ -57,8 +57,10 @@ export const Board = (props: any) => {
             size={item.value === 0 ? marbleEmptySize : marbleColorSize}
             rowIndex={item.y}
             cellIndex={item.x}
+            checkAndMoveMarble={props.checkAndMoveMarble}
             setMarbleClickedCoordinates={setMarbleClickedCoordinates}
             setMarbleClicked={props.setMarbleClicked}
+            preview={props.preview}
           />
         </Box>
       ))}
