@@ -10,25 +10,43 @@ export function Controls(props: ControlProps) {
   const { checkAndMoveMarble } = props;
 
   return (
-    <Box shadow={1} rounded="lg">
-      <HStack p={4} space={2}>
-        <Button onPress={() => checkAndMoveMarble('W')}>
-          {' '}
-          {DIRECTION_CHARS.west}{' '}
-        </Button>
-        <Button onPress={() => checkAndMoveMarble('N')}>
-          {' '}
-          {DIRECTION_CHARS.north}{' '}
-        </Button>
-        <Button onPress={() => checkAndMoveMarble('E')}>
-          {' '}
-          {DIRECTION_CHARS.east}{' '}
-        </Button>
-        <Button onPress={() => checkAndMoveMarble('S')}>
-          {' '}
-          {DIRECTION_CHARS.south}{' '}
-        </Button>
-      </HStack>
-    </Box>
+    <HStack p={4} space={2}>
+      <Button
+        rounded="full"
+        height="12"
+        width="12"
+        bg="blue.800"
+        onPress={() => checkAndMoveMarble('W')}
+      >
+        {DIRECTION_CHARS.west}
+      </Button>
+      <Button
+        rounded="full"
+        height="12"
+        width="12"
+        bg="blue.800"
+        onPress={() => checkAndMoveMarble('N')}
+      >
+        {DIRECTION_CHARS.north}
+      </Button>
+      <Button
+        rounded="full"
+        height="12"
+        width="12"
+        bg="blue.800"
+        onPress={() => checkAndMoveMarble('E')}
+      >
+        {DIRECTION_CHARS.east}
+      </Button>
+      <Button
+        rounded="full"
+        height="12"
+        width="12"
+        bg="blue.800"
+        onPress={() => checkAndMoveMarble('S')}
+      >
+        {DIRECTION_CHARS.south}
+      </Button>
+    </HStack>
   );
 }

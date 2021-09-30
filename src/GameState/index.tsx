@@ -14,6 +14,8 @@ import {
   useToast,
   View,
   Button,
+  Center,
+  VStack,
 } from 'native-base';
 import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { API_URL, GATEWAY_URL } from '../constants';
@@ -113,9 +115,21 @@ export default function GameState({ navigation, route, player }: any) {
     }
   };
 
-  const getPlayerObject = (player: User) => {
+  const getMobileUserInformation = () => {
+    const mobileUserInformation = state.players.find((p) => p.id === player.id);
+    return getPlayerObject(mobileUserInformation);
+  };
+
+  const getOpponentUserInformation = () => {
+    const opponentUserInformation = state.players.find(
+      (p) => p.id !== player.id,
+    );
+    return getPlayerObject(opponentUserInformation);
+  };
+
+  const getPlayerObject = (player: User | undefined) => {
     const playerGame = state?.game?.players?.find(
-      (p) => p.playerNumber === player.id,
+      (p) => p.playerNumber === player?.id,
     );
     return { ...playerGame, ...player };
   };
@@ -135,18 +149,6 @@ export default function GameState({ navigation, route, player }: any) {
 
       if (messageParsed.event) {
         switch (messageParsed.event.type) {
-          case 'switchPlayer':
-            toast.show({
-              title: 'Player turn',
-              status: 'info',
-              description: `it's your ${
-                messageParsed.event.data.playerId !== player.id
-                  ? 'opponent'
-                  : ''
-              } turn`,
-            });
-            break;
-
           case 'animatedMarble':
             if (messageParsed.event.data.playerId != player.id) {
               dispatch({
@@ -327,18 +329,25 @@ export default function GameState({ navigation, route, player }: any) {
           <Spinner size="lg" />
         </View>
       ) : !state.error ? (
-        <ScrollView p={6} contentContainerStyle={{ paddingBottom: 24 }}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 24 }}>
           <ModalWin navigation={navigation} showModal={state.game?.hasWinner} />
-          <GameInfo game={state.game} />
-          <Board
-            board={state.game?.board}
-            setMarbleClicked={setMarbleClicked}
-            animatedMarble={state.animatedMarble}
+          <GameInfo game={state.game} currentPlayer={player} />
+          <GameUser
+            user={getMobileUserInformation()}
+            opponent={false}
+            key={player.id}
           />
-          <Controls checkAndMoveMarble={checkAndMoveMarble} />
-          {state.players.map((player) => (
-            <GameUser user={getPlayerObject(player)} key={player.id} />
-          ))}
+          <Center p={6}>
+            <Board
+              board={state.game?.board}
+              setMarbleClicked={setMarbleClicked}
+              animatedMarble={state.animatedMarble}
+            />
+          </Center>
+          <Center>
+            <Controls checkAndMoveMarble={checkAndMoveMarble} />
+          </Center>
+          <GameUser user={getOpponentUserInformation()} opponent={true} />
         </ScrollView>
       ) : (
         <View
@@ -376,39 +385,20 @@ function GameInfo(props: any) {
   return (
     <Box
       shadow={1}
-      mb={4}
       bg={{
         linearGradient: {
-          colors: ['cyan.400', 'cyan.100'],
+          colors: ['orange.400', 'amber.400'],
           start: [0, 0],
           end: [1, 0],
         },
       }}
-      rounded="lg"
     >
-      <HStack
-        alignItems="center"
-        justifyContent="space-between"
-        p={4}
-        space={2}
-      >
-        <Text fontSize="lg" bold color="white">
-          Game #{game?.id}
-        </Text>
-        <Flex alignItems="center" direction="row">
-          <Text fontSize="lg" bold color="white" pr={2}>
-            Has Winner:
-          </Text>
-          {game?.hasWinner ? (
-            <CheckIcon color="green.600" />
-          ) : (
-            <SmallCloseIcon color="red.600" />
-          )}
-        </Flex>
-      </HStack>
       <Stack p={4} space={2}>
-        <Text fontSize="lg" bold color="white">
-          Player turn: #{game?.currentPlayer || game?.currentPlayerId}
+        <Text fontSize="lg" bold color="black">
+          {game?.currentPlayer === props.currentPlayer.id ||
+          game?.currentPlayerId === props.currentPlayer.id
+            ? 'Your turn !'
+            : 'Opponent turn !'}
         </Text>
       </Stack>
     </Box>
@@ -423,21 +413,17 @@ function GameUser(props: any) {
       mb={4}
       bg={{
         linearGradient: {
-          colors: ['cyan.400', 'cyan.100'],
+          colors: ['blue.800', 'blue.600'],
           start: [0, 0],
           end: [1, 0],
         },
       }}
-      rounded="lg"
     >
-      <Stack p={4} space={2}>
+      <Stack p={4} space={1}>
         <HStack alignItems="center" justifyContent="space-between" space={4}>
           <Stack space={2}>
             <Heading size="md" ml={-1} color="white">
-              {user.username} #{user.id}
-            </Heading>
-            <Heading size="xs" color="white" fontWeight="500" ml={-0.5} mt={-1}>
-              {user.email}
+              {props.opponent ? `#${user.username}` : 'Your'} captures:
             </Heading>
           </Stack>
           <Stack>

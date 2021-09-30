@@ -79,7 +79,12 @@ export default function App() {
                   <GameSelector {...props} player={user} setUser={setUser} />
                 )}
               </Stack.Screen>
-              <Stack.Screen name={GAME_STATE}>
+              <Stack.Screen
+                name={GAME_STATE}
+                options={({ route }) => ({
+                  title: 'Game #' + route?.params?.gameId,
+                })}
+              >
                 {(props) => <GameState {...props} player={user} />}
               </Stack.Screen>
               <Stack.Screen name="Account">

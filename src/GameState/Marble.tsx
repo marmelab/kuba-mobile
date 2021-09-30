@@ -1,12 +1,25 @@
-import { Circle, Pressable, Box } from 'native-base';
+import { Circle, Pressable, Box, View } from 'native-base';
 import React from 'react';
+import { ImageBackground } from 'react-native';
 
-const MARBLE_COLOR_RADIAL = ['warmGray.300', 'black', 'white', 'red.700'];
+const RED_MARBLE = require('./red-marble.png');
+const WHITE_MARBLE = require('./white-marble.png');
+const BLACK_MARBLE = require('./black-marble.png');
+const MARBLE_COLOR_IMAGE = ['', BLACK_MARBLE, WHITE_MARBLE, RED_MARBLE];
 
 export const Marble = (props: any) => {
   const size = props.size;
   const child = (
-    <Circle size={size} m={0} p={0} bgColor={getMarbleColor(props.value)} />
+    <View width={size} height={size}>
+      <ImageBackground
+        source={getMarbleColorImage(props.value)}
+        resizeMode="cover"
+        style={{
+          width: '100%',
+          height: '100%',
+        }}
+      />
+    </View>
   );
 
   const marbleClick = async () => {
@@ -29,6 +42,6 @@ export const Marble = (props: any) => {
   );
 };
 
-const getMarbleColor = (value: number): string => {
-  return MARBLE_COLOR_RADIAL[value];
+const getMarbleColorImage = (value: number): any => {
+  return MARBLE_COLOR_IMAGE[value];
 };
