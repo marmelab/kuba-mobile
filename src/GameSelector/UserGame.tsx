@@ -11,6 +11,10 @@ interface UserGameProps {
   mobilePlayer: any;
 }
 
+const getDateFormat = (date: string) => {
+  return new Date(date).toLocaleDateString('fr-FR');
+};
+
 export const UserGame = ({
   game,
   navigateToGameState,
@@ -41,9 +45,7 @@ export const UserGame = ({
             </Text>
             <Text color={colors.foreground}>
               Last move:
-              {new Date(game?.lastMoveDate as string).toLocaleDateString(
-                'fr-FR',
-              )}
+              {getDateFormat(game?.lastMoveDate as string)}
             </Text>
             <Text
               fontSize="xs"
@@ -51,9 +53,7 @@ export const UserGame = ({
               alignSelf="flex-start"
             >
               Creation date:
-              {new Date(game?.creationDate as string).toLocaleDateString(
-                'fr-FR',
-              )}
+              {getDateFormat(game?.creationDate as string)}
             </Text>
           </VStack>
         </HStack>
