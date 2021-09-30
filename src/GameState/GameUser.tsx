@@ -9,7 +9,7 @@ export function GameUser(props: any) {
   return (
     <Box
       shadow={1}
-      mb={4}
+      width={'50%'}
       bg={{
         linearGradient: {
           colors: ['blue.800', 'blue.600'],
@@ -18,26 +18,23 @@ export function GameUser(props: any) {
         },
       }}
     >
-      <Stack p={4} space={1}>
+      <Stack p={4}>
         <HStack alignItems="center" justifyContent="space-between" space={4}>
-          <Stack space={2}>
-            <Heading size="md" ml={-1} color="white">
+          <Stack>
+            <Heading size="sm" ml={-1} color="white">
               {props.opponent
                 ? `#${user.username ? user.username : 'Opponent'}`
                 : 'Your'}{' '}
               captures:
             </Heading>
           </Stack>
-          <Stack>
-            <Marble value={user.marbleColor} size={10} />
-          </Stack>
         </HStack>
         <HStack>
           {user?.marblesWon && user?.marblesWon.length > 0 ? (
             <View>
-              <HStack>
+              <HStack style={{ width: '80%', flex: 1, flexWrap: 'wrap' }}>
                 {user?.marblesWon?.map((marble, index) => (
-                  <Marble value={marble} size={4} key={index} />
+                  <Marble value={marble} size={3} key={index} />
                 ))}
               </HStack>
             </View>
