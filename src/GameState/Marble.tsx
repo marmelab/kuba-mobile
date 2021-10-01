@@ -1,5 +1,5 @@
 import { Pressable, View } from 'native-base';
-import React from 'react';
+import React, { Props, useReducer } from 'react';
 import { ImageBackground } from 'react-native';
 
 const RED_MARBLE = require('./red-marble.png');
@@ -8,12 +8,13 @@ const BLACK_MARBLE = require('./black-marble.png');
 const MARBLE_COLOR_IMAGE = [BLACK_MARBLE, WHITE_MARBLE, RED_MARBLE];
 
 export const Marble = (props: any) => {
-  let clicked = props.clicked;
-  const size = props.size;
+  const { size, value, clicked } = props;
+  const [isClicked, setIsClicked] = React.useState(clicked);
+
   const child = (
     <View width={size} height={size}>
       <ImageBackground
-        source={getMarbleColorImage(props.value)}
+        source={getMarbleColorImage(value)}
         resizeMode="cover"
         style={{
           width: '100%',
@@ -24,8 +25,8 @@ export const Marble = (props: any) => {
   );
 
   const handleClickMarble = async () => {
-    clicked = !clicked;
-    if (clicked) {
+    setIsClicked(!isClicked);
+    if (isClicked) {
       props.setMarbleClicked({
         x: props.cellIndex,
         y: props.rowIndex,

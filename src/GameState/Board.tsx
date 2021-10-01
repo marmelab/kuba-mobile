@@ -109,7 +109,6 @@ export const Board = (props: any) => {
             </TranslateView>
           );
         })}
-        {console.log(marbleClickedCoordinates)}
         {!props.preview && marbleClickedCoordinates && (
           <>
             {marbleClickedCoordinates.y > 0 && (

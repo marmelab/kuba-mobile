@@ -54,7 +54,7 @@ export const DirectionControl = (props: DirectionControlProps) => {
   return (
     <Pressable
       onPress={() => {
-        handlePressDirection('W');
+        handlePressDirection(props.direction);
       }}
       size={MARBLE_SIZE.full}
       style={{
