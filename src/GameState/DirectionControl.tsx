@@ -8,93 +8,73 @@ export const DirectionControl = (props: DirectionControlProps) => {
     props.checkAndMoveMarble(direction);
     props.setMarbleClickedCoordinates(undefined);
   };
-  switch (props.direction) {
-    case 'N':
-      return (
-        <Pressable
-          onPress={() => handlePressDirection('N')}
-          size={MARBLE_SIZE.full}
-          style={{
-            position: 'absolute',
-            left: `${props.coordinates.x * props.boxMarbleSize}%`,
-            top: `${
-              props.coordinates.y * props.boxMarbleSize - props.boxMarbleSize
-            }%`,
-            zIndex: 1000,
-            elevation: 1000,
-            backgroundColor: 'black',
-          }}
-        >
-          <Entypo name="arrow-bold-up" size={40} m={0} p={0} color="white" />
-        </Pressable>
-      );
-    case 'E':
-      return (
-        <Pressable
-          onPress={() => {
-            handlePressDirection('E');
-          }}
-          size={MARBLE_SIZE.full}
-          style={{
-            position: 'absolute',
-            left: `${
-              props.coordinates.x * props.boxMarbleSize + props.boxMarbleSize
-            }%`,
-            top: `${props.coordinates.y * props.boxMarbleSize}%`,
-            zIndex: 1000,
-            elevation: 1000,
-            backgroundColor: 'black',
-          }}
-        >
-          <Entypo name="arrow-bold-right" size={40} m={0} p={0} color="white" />
-        </Pressable>
-      );
-    case 'S':
-      return (
-        <Pressable
-          onPress={() => {
-            handlePressDirection('S');
-          }}
-          size={MARBLE_SIZE.full}
-          style={{
-            position: 'absolute',
-            left: `${props.coordinates.x * props.boxMarbleSize}%`,
-            top: `${
-              props.coordinates.y * props.boxMarbleSize + props.boxMarbleSize
-            }%`,
-            zIndex: 1000,
-            elevation: 1000,
-            backgroundColor: 'black',
-          }}
-        >
-          <Entypo name="arrow-bold-down" size={40} m={0} p={0} color="white" />
-        </Pressable>
-      );
-    case 'W':
-      return (
-        <Pressable
-          onPress={() => {
-            handlePressDirection('W');
-          }}
-          size={MARBLE_SIZE.full}
-          style={{
-            position: 'absolute',
-            left: `${
-              props.coordinates.x * props.boxMarbleSize - props.boxMarbleSize
-            }%`,
-            top: `${props.coordinates.y * props.boxMarbleSize}%`,
-            zIndex: 1000,
-            elevation: 1000,
-            backgroundColor: 'black',
-          }}
-        >
-          <Entypo name="arrow-bold-left" size={40} m={0} p={0} color="white" />
-        </Pressable>
-      );
 
-    default:
-      throw new Error(`direction ${props.direction} is not a valid direction`);
-  }
+  const getPressableInformation = (direction: string) => {
+    switch (props.direction) {
+      case 'N':
+        return {
+          left: `${props.coordinates.x * props.boxMarbleSize}%`,
+          top: `${
+            props.coordinates.y * props.boxMarbleSize - props.boxMarbleSize
+          }%`,
+          nameIcon: 'arrow-bold-up' as any,
+        };
+
+      case 'E':
+        return {
+          left: `${
+            props.coordinates.x * props.boxMarbleSize + props.boxMarbleSize
+          }%`,
+          top: `${props.coordinates.y * props.boxMarbleSize}%`,
+          nameIcon: 'arrow-bold-right' as any,
+        };
+
+      case 'S':
+        return {
+          left: `${props.coordinates.x * props.boxMarbleSize}%`,
+          top: `${
+            props.coordinates.y * props.boxMarbleSize + props.boxMarbleSize
+          }%`,
+          nameIcon: 'arrow-bold-down' as any,
+        };
+
+      case 'W':
+        return {
+          left: `${
+            props.coordinates.x * props.boxMarbleSize - props.boxMarbleSize
+          }%`,
+          top: `${props.coordinates.y * props.boxMarbleSize}%`,
+          nameIcon: 'arrow-bold-left' as any,
+        };
+    }
+  };
+
+  const pressableInformation = getPressableInformation(props.direction);
+
+  return (
+    <Pressable
+      onPress={() => {
+        handlePressDirection('W');
+      }}
+      size={MARBLE_SIZE.full}
+      style={{
+        position: 'absolute',
+        left: pressableInformation?.left,
+        top: pressableInformation?.top,
+        zIndex: 1000,
+        elevation: 1000,
+        backgroundColor: 'black',
+      }}
+    >
+      <Entypo
+        name={pressableInformation?.nameIcon}
+        size={40}
+        m={0}
+        p={0}
+        color="white"
+      />
+    </Pressable>
+  );
 };
 
 interface DirectionControlProps {

@@ -58,13 +58,11 @@ export const Board = (props: any) => {
         }}
       >
         {boardCoordinate.map((item) => {
-          let zIndex = 0;
-          if (
+          const zIndex =
             marbleClickedCoordinates?.x === item.x &&
             marbleClickedCoordinates?.y === item.y
-          ) {
-            zIndex = 1;
-          }
+              ? 1
+              : 0;
           return (
             <TranslateView
               activated={marbleIsAnimated(
@@ -111,7 +109,7 @@ export const Board = (props: any) => {
             </TranslateView>
           );
         })}
-
+        {console.log(marbleClickedCoordinates)}
         {!props.preview && marbleClickedCoordinates && (
           <>
             {marbleClickedCoordinates.y > 0 && (

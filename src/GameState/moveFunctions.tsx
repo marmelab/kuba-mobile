@@ -45,9 +45,5 @@ export const moveMarble = async (
     throw Error(response.statusText);
   }
 
-  if (response.status >= 200 && response.status < 300) {
-    return await response.json();
-  } else {
-    return false;
-  }
+  return await response.json();
 };
