@@ -40,7 +40,7 @@ export const Board = (props: any) => {
 
   const boardCoordinate = convertBoardToBoardCoordinate(board);
   const boxMarbleSize = 100 / board.length;
-  const boxMarbleSizePourcent = `${boxMarbleSize}%`;
+  const boxMarbleSizePercent = `${boxMarbleSize}%`;
   return (
     <View
       width={boardSize}
@@ -76,8 +76,8 @@ export const Board = (props: any) => {
                 position: 'absolute',
                 left: `${item.x * boxMarbleSize}%`,
                 top: `${item.y * boxMarbleSize}%`,
-                width: boxMarbleSizePourcent,
-                height: boxMarbleSizePourcent,
+                width: boxMarbleSizePercent,
+                height: boxMarbleSizePercent,
                 alignItems: 'center',
                 justifyContent: 'center',
                 zIndex: zIndex,
