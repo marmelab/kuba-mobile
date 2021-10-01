@@ -65,7 +65,6 @@ export default function GameState({ navigation, route, player }: any) {
   useEffect(() => {
     if (!!state.animatedMarble && !!state.moveMarbleReference) {
       moveMarble(state.moveMarbleReference);
-
       dispatch({ type: 'moveMarbleReference', value: undefined });
     }
   }, [state.animatedMarble]);
@@ -139,8 +138,10 @@ export default function GameState({ navigation, route, player }: any) {
       const messageParsed = JSON.parse(message.data);
 
       if (messageParsed.gameState) {
-        dispatch({ type: 'animatedMarble', value: undefined });
-        dispatch({ type: 'game', value: messageParsed.gameState });
+        setTimeout(() => {
+          dispatch({ type: 'animatedMarble', value: undefined });
+          dispatch({ type: 'game', value: messageParsed.gameState });
+        }, 500);
       }
 
       if (messageParsed.event) {
@@ -189,7 +190,7 @@ export default function GameState({ navigation, route, player }: any) {
             break;
 
           case 'error':
-            if (state.game?.currentPlayerId === player.id) {
+            if (messageParsed.event.data.playerId === player.id) {
               toast.show({
                 title: 'Error',
                 status: 'error',
@@ -348,10 +349,10 @@ export default function GameState({ navigation, route, player }: any) {
               board={state.game?.board}
               setMarbleClicked={setMarbleClicked}
               animatedMarble={state.animatedMarble}
+              checkAndMoveMarble={checkAndMoveMarble}
+              user={getUserInformation(false, player.id)}
+              myTurn={state.game?.currentPlayerId === player.id}
             />
-          </Center>
-          <Center>
-            <Controls checkAndMoveMarble={checkAndMoveMarble} />
           </Center>
         </ScrollView>
       ) : (

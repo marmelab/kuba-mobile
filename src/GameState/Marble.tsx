@@ -8,11 +8,13 @@ const BLACK_MARBLE = require('./black-marble.png');
 const MARBLE_COLOR_IMAGE = [BLACK_MARBLE, WHITE_MARBLE, RED_MARBLE];
 
 export const Marble = (props: any) => {
-  const size = props.size;
+  const { size, value } = props;
+  let clicked = props.clicked;
+
   const child = (
     <View width={size} height={size}>
       <ImageBackground
-        source={getMarbleColorImage(props.value)}
+        source={getMarbleColorImage(value)}
         resizeMode="cover"
         style={{
           width: '100%',
@@ -23,23 +25,32 @@ export const Marble = (props: any) => {
   );
 
   const handleClickMarble = async () => {
-    props.setMarbleClicked({
-      x: props.cellIndex,
-      y: props.rowIndex,
-      value: props.value,
-      isExit: false,
-    });
-    props.setMarbleClickedCoordinates({
-      x: props.cellIndex,
-      y: props.rowIndex,
-    });
+    clicked = !props.clicked;
+    if (clicked) {
+      props.setMarbleClicked({
+        x: props.cellIndex,
+        y: props.rowIndex,
+        value: props.value,
+        isExit: false,
+      });
+      props.setMarbleClickedCoordinates({
+        x: props.cellIndex,
+        y: props.rowIndex,
+      });
+    } else {
+      props.setMarbleClickedCoordinates(null);
+    }
   };
 
-  return (
-    <Pressable p={0} onPress={() => handleClickMarble()}>
-      {child}
-    </Pressable>
-  );
+  if (props.clickable) {
+    return (
+      <Pressable p={0} onPress={() => handleClickMarble()}>
+        {child}
+      </Pressable>
+    );
+  } else {
+    return child;
+  }
 };
 
 const getMarbleColorImage = (value: number): any => {
