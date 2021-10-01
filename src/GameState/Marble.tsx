@@ -37,7 +37,7 @@ export const Marble = (props: any) => {
         y: props.rowIndex,
       });
     } else {
-      props.setMarbleClickedCoordinates(undefined);
+      props.setMarbleClickedCoordinates(null);
     }
   };
 
