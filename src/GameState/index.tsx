@@ -350,6 +350,8 @@ export default function GameState({ navigation, route, player }: any) {
               setMarbleClicked={setMarbleClicked}
               animatedMarble={state.animatedMarble}
               checkAndMoveMarble={checkAndMoveMarble}
+              user={getUserInformation(false, player.id)}
+              myTurn={state.game?.currentPlayerId === player.id}
             />
           </Center>
         </ScrollView>

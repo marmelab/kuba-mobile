@@ -41,6 +41,11 @@ export const Board = (props: any) => {
   const boardCoordinate = convertBoardToBoardCoordinate(board);
   const boxMarbleSize = 100 / board.length;
   const boxMarbleSizePercent = `${boxMarbleSize}%`;
+
+  const isMarbleClickable = (value: number) => {
+    return !props.preview && props.user.playerNumber === value && props.myTurn;
+  };
+
   return (
     <View
       width={boardSize}
@@ -93,6 +98,7 @@ export const Board = (props: any) => {
               >
                 {item.value != 0 && (
                   <Marble
+                    clickable={isMarbleClickable(item.value)}
                     value={item.value}
                     size={marbleColorSize}
                     rowIndex={item.y}
